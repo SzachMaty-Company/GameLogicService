@@ -3,6 +3,7 @@ package com.szachmaty.gamelogicservice.domain.board;
 import com.szachmaty.gamelogicservice.domain.board.piece.Piece;
 import com.szachmaty.gamelogicservice.domain.move.Move;
 import com.szachmaty.gamelogicservice.domain.move.Pos;
+import com.szachmaty.gamelogicservice.domain.player.Player;
 import lombok.Getter;
 
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
 public class BoardState {
 
     private List<Piece> pieces;
+    private Player playerToMove;
 
-    public BoardState(List<Piece> pieces) {
+    public BoardState(List<Piece> pieces, Player playerToMove) {
         this.pieces = pieces;
+        this.playerToMove = playerToMove;
     }
 
     public Piece getPieceOnPos(Pos pos) {
@@ -27,4 +30,7 @@ public class BoardState {
         return null;
     }
 
+    public boolean isPosEmpty(Pos pos) {
+        return getPieceOnPos(pos) == null;
+    }
 }

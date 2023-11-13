@@ -6,14 +6,14 @@ public record Pos(int x, int y) {
 
     private static final String LABELS = "abcdefgh";
 
-    public Pos {
-        var isXValid = x >= 0 && x < 8;
-        var isYValid = y >= 0 && y < 8;
-
-        if (!isXValid || !isYValid) {
-            throw new InvalidPosException("Invalid pos value: " + this.toSimpleString());
-        }
-    }
+//    public Pos {
+//        var isXValid = x >= 0 && x < 8;
+//        var isYValid = y >= 0 && y < 8;
+//
+//        if (!isXValid || !isYValid) {
+//            throw new InvalidPosException("Invalid pos value: " + this.toSimpleString());
+//        }
+//    }
 
     public static Pos of(int x, int y) {
         return new Pos(x, y);
@@ -58,6 +58,13 @@ public record Pos(int x, int y) {
 
     public String toCanonicalString() {
         return xToLabel() + this.y;
+    }
+
+    public static boolean isPosValid(Pos pos) {
+        var isXValid = pos.x >= 0 && pos.x < 8;
+        var isYValid = pos.y >= 0 && pos.y < 8;
+
+        return isXValid && isYValid;
     }
 
     private String xToLabel() {
