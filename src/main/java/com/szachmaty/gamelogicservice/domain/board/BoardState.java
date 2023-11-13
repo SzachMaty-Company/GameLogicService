@@ -31,6 +31,6 @@ public class BoardState {
     }
 
     public boolean isPosEmpty(Pos pos) {
-        return getPieceOnPos(pos) == null;
+        return pos == null || getPieceOnPos(pos) == null;
     }
 }

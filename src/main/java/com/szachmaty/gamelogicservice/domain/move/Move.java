@@ -2,6 +2,7 @@ package com.szachmaty.gamelogicservice.domain.move;
 
 import com.szachmaty.gamelogicservice.domain.move.exception.IllegalMoveException;
 
+// TODO: what about pawn promotion?
 public record Move(Pos from, Pos to) {
 
     public static Move of(Pos from, Pos to) {
