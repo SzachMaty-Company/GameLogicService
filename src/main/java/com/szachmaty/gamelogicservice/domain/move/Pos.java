@@ -1,9 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.move;
 
-import com.szachmaty.gamelogicservice.domain.move.exception.IllegalMoveException;
 import com.szachmaty.gamelogicservice.domain.move.exception.InvalidPosException;
-
-import java.awt.*;
 
 public record Pos(int x, int y) {
 
@@ -33,7 +30,8 @@ public record Pos(int x, int y) {
             throw new IllegalArgumentException("Length must be 2");
         }
 
-        var x = LABELS.indexOf(pos.charAt(0));
+        var label = pos.substring(0, 1).toLowerCase().toCharArray()[0];
+        var x = LABELS.indexOf(label);
         var isCharacterValid = x != -1;
         if (!isCharacterValid) {
             throw new IllegalArgumentException("Invalid Character at index 0");

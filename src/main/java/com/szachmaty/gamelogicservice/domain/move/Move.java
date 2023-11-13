@@ -2,15 +2,7 @@ package com.szachmaty.gamelogicservice.domain.move;
 
 import com.szachmaty.gamelogicservice.domain.move.exception.IllegalMoveException;
 
-public class Move {
-
-    private Pos from;
-    private Pos to;
-
-    public Move(Pos from, Pos to) {
-        this.from = from;
-        this.to = to;
-    }
+public record Move(Pos from, Pos to) {
 
     public static Move of(Pos from, Pos to) {
         var arePosTheSame = from.equals(to);
