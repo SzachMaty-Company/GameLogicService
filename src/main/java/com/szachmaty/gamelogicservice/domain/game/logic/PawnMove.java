@@ -3,6 +3,7 @@ package com.szachmaty.gamelogicservice.domain.game.logic;
 import com.szachmaty.gamelogicservice.domain.board.Board;
 import com.szachmaty.gamelogicservice.domain.board.BoardState;
 import com.szachmaty.gamelogicservice.domain.board.piece.PieceType;
+import com.szachmaty.gamelogicservice.domain.move.Capture;
 import com.szachmaty.gamelogicservice.domain.move.Move;
 import com.szachmaty.gamelogicservice.domain.move.Pos;
 import com.szachmaty.gamelogicservice.domain.player.Player;
@@ -24,7 +25,7 @@ public class PawnMove {
         };
     }
 
-    public static Set<Pos> getPawnCaptures(Board board, Pos pos) {
+    public static Set<Capture> getPawnCaptures(Board board, Pos pos) {
         if (!PieceType.PAWN.equals(board.getCurrentBoardState().getPieceOnPos(pos).getType())) {
             return Set.of();
         }
@@ -74,20 +75,20 @@ public class PawnMove {
         return moves;
     }
 
-    private static Set<Pos> getPawnCapturesForWhite(Board board, Pos from) {
-        var possibleCaptures = new ArrayList<Pos>();
+    private static Set<Capture> getPawnCapturesForWhite(Board board, Pos from) {
+        var possibleCaptures = new ArrayList<Capture>();
         var currentBoardState = board.getCurrentBoardState();
 
         var normalCapture1 = Pos.of(from.file() - 1, from.rank() + 1);
         if (!currentBoardState.isPosEmpty(normalCapture1)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(normalCapture1).getPlayer())) {
-            possibleCaptures.add(normalCapture1);
+            possibleCaptures.add(Capture.of(Move.of(from, normalCapture1)));
         }
 
         var normalCapture2 = Pos.of(from.file() + 1, from.rank() + 1);
         if (!currentBoardState.isPosEmpty(normalCapture2)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(normalCapture2).getPlayer())) {
-            possibleCaptures.add(normalCapture2);
+            possibleCaptures.add(Capture.of(Move.of(from, normalCapture2)));
         }
 
         // en passant
@@ -96,7 +97,7 @@ public class PawnMove {
                 && !currentBoardState.isPosEmpty(posNextToPawn1)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(posNextToPawn1).getPlayer())
                 && currentBoardState.getPieceOnPos(posNextToPawn1).canBeCapturedByEnPassant()) {
-            possibleCaptures.add(normalCapture1);
+            possibleCaptures.add(Capture.enPassant(Move.of(from, normalCapture1), posNextToPawn1));
         }
 
         var posNextToPawn2 = Pos.of(from.file() + 1, from.rank());
@@ -104,11 +105,12 @@ public class PawnMove {
                 && !currentBoardState.isPosEmpty(posNextToPawn2)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(posNextToPawn2).getPlayer())
                 && currentBoardState.getPieceOnPos(posNextToPawn2).canBeCapturedByEnPassant()) {
-            possibleCaptures.add(normalCapture2);
+            possibleCaptures.add(Capture.enPassant(Move.of(from, normalCapture2), posNextToPawn2));
         }
 
         var captures = possibleCaptures.stream()
-                .filter(BoardState::isPosValid)
+                .filter(c -> BoardState.isPosValid(c.move().to()))
+                .filter(c -> BoardState.isPosValid(c.posOfPieceToCapture()))
                 .collect(Collectors.toSet());
 
         return captures;
@@ -118,7 +120,7 @@ public class PawnMove {
         return null;
     }
 
-    private static Set<Pos> getPawnCapturesForBlack(Board board, Pos pos) {
+    private static Set<Capture> getPawnCapturesForBlack(Board board, Pos pos) {
         return null;
     }
 
