@@ -8,7 +8,6 @@ import com.szachmaty.gamelogicservice.domain.move.Pos;
 import com.szachmaty.gamelogicservice.domain.player.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -92,19 +91,19 @@ public class PawnMove {
         }
 
         // en passant
-        var pieceNextToPawn1 = currentBoardState.getPieceOnPos(Pos.of(from.file() - 1, from.rank()));
+        var posNextToPawn1 = Pos.of(from.file() - 1, from.rank());
         if (currentBoardState.isPosEmpty(normalCapture1)
-                && pieceNextToPawn1 != null
-                && Player.BLACK.equals(pieceNextToPawn1.getPlayer())
-                && pieceNextToPawn1.isCanBeCapturedByEnPassant()) {
+                && !currentBoardState.isPosEmpty(posNextToPawn1)
+                && Player.BLACK.equals(currentBoardState.getPieceOnPos(posNextToPawn1).getPlayer())
+                && currentBoardState.getPieceOnPos(posNextToPawn1).canBeCapturedByEnPassant()) {
             possibleCaptures.add(normalCapture1);
         }
 
-        var pieceNextToPawn2 = currentBoardState.getPieceOnPos(Pos.of(from.file() + 1, from.rank()));
+        var posNextToPawn2 = Pos.of(from.file() + 1, from.rank());
         if (currentBoardState.isPosEmpty(normalCapture1)
-                && pieceNextToPawn2 != null
-                && Player.BLACK.equals(pieceNextToPawn2.getPlayer())
-                && pieceNextToPawn2.isCanBeCapturedByEnPassant()) {
+                && !currentBoardState.isPosEmpty(posNextToPawn2)
+                && Player.BLACK.equals(currentBoardState.getPieceOnPos(posNextToPawn2).getPlayer())
+                && currentBoardState.getPieceOnPos(posNextToPawn2).canBeCapturedByEnPassant()) {
             possibleCaptures.add(normalCapture2);
         }
 

@@ -23,4 +23,12 @@ public class Piece {
         this.hasMoved = false;
     }
 
+    public boolean canBeCapturedByEnPassant() {
+        return canBeCapturedByEnPassant;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
 }
