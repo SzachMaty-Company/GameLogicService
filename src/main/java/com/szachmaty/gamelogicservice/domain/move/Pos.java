@@ -2,73 +2,62 @@ package com.szachmaty.gamelogicservice.domain.move;
 
 import com.szachmaty.gamelogicservice.domain.move.exception.InvalidPosException;
 
-public record Pos(int x, int y) {
+public record Pos(int file, int rank) {
 
-    private static final String LABELS = "abcdefgh";
+    private static final String FILES = "abcdefgh";
 
-//    public Pos {
-//        var isXValid = x >= 0 && x < 8;
-//        var isYValid = y >= 0 && y < 8;
-//
-//        if (!isXValid || !isYValid) {
-//            throw new InvalidPosException("Invalid pos value: " + this.toSimpleString());
-//        }
-//    }
-
-    public static Pos of(int x, int y) {
-        return new Pos(x, y);
+    public static Pos of(int file, int rank) {
+        return new Pos(file, rank);
     }
 
-    public static Pos of(String pos) {
-        var isStringNotNull = pos != null;
-        if (!isStringNotNull) {
+    public static Pos of(String value) {
+        var isValueNotNull = value != null;
+        if (!isValueNotNull) {
             throw new IllegalArgumentException("Pos cannot be constructed from null");
         }
 
-        var isLengthValid = pos.length() == 2;
+        var isLengthValid = value.length() == 2;
         if (!isLengthValid) {
             throw new IllegalArgumentException("Length must be 2");
         }
 
-        var label = pos.substring(0, 1).toLowerCase().toCharArray()[0];
-        var x = LABELS.indexOf(label);
-        var isCharacterValid = x != -1;
+        var file = FILES.indexOf(Character.toLowerCase(value.charAt(0))) + 1;
+        var isCharacterValid = file != 0;
         if (!isCharacterValid) {
             throw new IllegalArgumentException("Invalid Character at index 0");
         }
 
-        int y = 0;
+        int rank = 1;
         try {
-            y = Integer.parseInt(String.valueOf(pos.charAt(1)));
+            rank = Integer.parseInt(String.valueOf(value.charAt(1)));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid character at index 1");
         }
 
-        var isYValid = y >= 0 && y < 8;
-        if (!isYValid) {
-            throw new IllegalArgumentException("Invalid number at index 1");
+        var pos = new Pos(file, rank);
+        if (!isPosValid(pos)) {
+            throw new InvalidPosException("Pos is invalid: " + pos.toSimpleString());
         }
-
-        return new Pos(x, y);
+        return pos;
     }
 
     public String toSimpleString() {
-        return this.x + ", " + this.y;
+        return this.file + ", " + this.rank;
     }
 
     public String toCanonicalString() {
-        return xToLabel() + this.y;
+        return xToLabel() + this.rank;
     }
 
     public static boolean isPosValid(Pos pos) {
-        var isXValid = pos.x >= 0 && pos.x < 8;
-        var isYValid = pos.y >= 0 && pos.y < 8;
+        var isFileValid = pos.file >= 1 && pos.file <= 8;
+        var isRankValid = pos.rank >= 1 && pos.rank <= 8;
 
-        return isXValid && isYValid;
+        return isFileValid && isRankValid;
     }
 
     private String xToLabel() {
-        return String.valueOf(LABELS.charAt(x));
+        return String.valueOf(FILES.charAt(file));
     }
 
 }

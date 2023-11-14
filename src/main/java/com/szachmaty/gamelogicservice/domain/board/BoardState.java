@@ -33,4 +33,9 @@ public class BoardState {
     public boolean isPosEmpty(Pos pos) {
         return pos == null || getPieceOnPos(pos) == null;
     }
+
+    public boolean isPosOnWhiteBackRank(Pos pos) {
+        return false;
+//        return pos.
+    }
 }

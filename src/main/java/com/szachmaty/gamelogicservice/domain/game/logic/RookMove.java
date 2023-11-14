@@ -42,10 +42,10 @@ public class RookMove {
         var possibleMovesWithoutCapture = new ArrayList<Pos>();
         var currentBoardState = board.getCurrentBoardState();
 
-        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.x() + i, pos.y())));
-        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.x() - i, pos.y())));
-        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.x(), pos.y() + i)));
-        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.x(), pos.y() - i)));
+        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.file() + i, pos.rank())));
+        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.file() - i, pos.rank())));
+        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.file(), pos.rank() + i)));
+        possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.file(), pos.rank() - i)));
 
         var moves = possibleMovesWithoutCapture.stream()
                 .filter(Pos::isPosValid)
@@ -58,10 +58,10 @@ public class RookMove {
         var possibleCaptures = new ArrayList<Pos>();
         var currentBoardState = board.getCurrentBoardState();
 
-        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.x() + i, pos.y())));
-        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.x() - i, pos.y())));
-        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.x(), pos.y() + i)));
-        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.x(), pos.y() - i)));
+        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.file() + i, pos.rank())));
+        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.file() - i, pos.rank())));
+        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.file(), pos.rank() + i)));
+        possibleCaptures.add(getCaptureInDirection(currentBoardState, i -> Pos.of(pos.file(), pos.rank() - i)));
 
         var captures = possibleCaptures.stream()
                 .filter(Objects::nonNull)

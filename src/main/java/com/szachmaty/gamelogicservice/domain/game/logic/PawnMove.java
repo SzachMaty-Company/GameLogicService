@@ -38,12 +38,12 @@ public class PawnMove {
         var currentBoardState = board.getCurrentBoardState();
 
         // moves
-        var shortMoveNextPos = Pos.of(pos.x(), pos.y() + 1);
+        var shortMoveNextPos = Pos.of(pos.file(), pos.rank() + 1);
         if (currentBoardState.isPosEmpty(shortMoveNextPos)) {
             possibleMovesWithoutCapture.add(shortMoveNextPos);
         }
 
-        var longMoveNextPos = Pos.of(pos.x(), pos.y() + 2);
+        var longMoveNextPos = Pos.of(pos.file(), pos.rank() + 2);
         if (!currentBoardState.getPieceOnPos(pos).isHasMoved()
                 && currentBoardState.isPosEmpty(shortMoveNextPos)
                 && currentBoardState.isPosEmpty(longMoveNextPos)) {
@@ -61,14 +61,14 @@ public class PawnMove {
         var possibleCaptures = new ArrayList<Pos>();
         var currentBoardState = board.getCurrentBoardState();
 
-        var normalCapture1 = Pos.of(pos.x() + 1, pos.y() + 1);
+        var normalCapture1 = Pos.of(pos.file() + 1, pos.rank() + 1);
         if (!currentBoardState.isPosEmpty(normalCapture1)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(normalCapture1).getPlayer())) {
             possibleCaptures.add(normalCapture1);
 
         }
 
-        var normalCapture2 = Pos.of(pos.x() - 1, pos.y() + 1);
+        var normalCapture2 = Pos.of(pos.file() - 1, pos.rank() + 1);
         if (!currentBoardState.isPosEmpty(normalCapture2)
                 && Player.BLACK.equals(currentBoardState.getPieceOnPos(normalCapture2).getPlayer())) {
             possibleCaptures.add(normalCapture2);
@@ -76,7 +76,7 @@ public class PawnMove {
         }
 
         // en passant
-        var pieceNextToPawn1 = currentBoardState.getPieceOnPos(Pos.of(pos.x() + 1, pos.y()));
+        var pieceNextToPawn1 = currentBoardState.getPieceOnPos(Pos.of(pos.file() + 1, pos.rank()));
         if (currentBoardState.isPosEmpty(normalCapture1)
                 && pieceNextToPawn1 != null
                 && Player.BLACK.equals(pieceNextToPawn1.getPlayer())
@@ -84,7 +84,7 @@ public class PawnMove {
             possibleCaptures.add(normalCapture1);
         }
 
-        var pieceNextToPawn2 = currentBoardState.getPieceOnPos(Pos.of(pos.x() - 1, pos.y()));
+        var pieceNextToPawn2 = currentBoardState.getPieceOnPos(Pos.of(pos.file() - 1, pos.rank()));
         if (currentBoardState.isPosEmpty(normalCapture1)
                 && pieceNextToPawn2 != null
                 && Player.BLACK.equals(pieceNextToPawn2.getPlayer())
