@@ -41,10 +41,12 @@ public class BoardState {
         return pos == null || getPieceOnPos(pos) == null;
     }
 
+    // whites start from 1st rank
     public boolean isPosOnWhiteBackRank(Pos pos) {
         return pos.rank() == 1;
     }
 
+    // blacks start from 8th rank
     public boolean isPosOnBlackBackRank(Pos pos) {
         return pos.rank() == 8;
     }

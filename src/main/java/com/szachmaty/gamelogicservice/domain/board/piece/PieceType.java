@@ -1,5 +1,7 @@
 package com.szachmaty.gamelogicservice.domain.board.piece;
 
+import java.util.List;
+
 public enum PieceType {
     PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING;
 
@@ -16,4 +18,6 @@ public enum PieceType {
             default -> throw new IllegalStateException("Invalid piece label provided: " + label);
         };
     }
+
+    public static final List<PieceType> POSSIBLE_PROMOTION_PIECES = List.of(KNIGHT, BISHOP, ROOK, QUEEN);
 }
