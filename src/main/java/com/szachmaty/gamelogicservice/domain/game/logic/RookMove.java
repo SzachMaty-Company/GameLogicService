@@ -48,7 +48,7 @@ public class RookMove {
         possibleMovesWithoutCapture.addAll(getPosInDirection(currentBoardState, i -> Pos.of(pos.file(), pos.rank() - i)));
 
         var moves = possibleMovesWithoutCapture.stream()
-                .filter(Pos::isPosValid)
+                .filter(BoardState::isPosValid)
                 .collect(Collectors.toSet());
 
         return moves;
@@ -65,7 +65,7 @@ public class RookMove {
 
         var captures = possibleCaptures.stream()
                 .filter(Objects::nonNull)
-                .filter(Pos::isPosValid)
+                .filter(BoardState::isPosValid)
                 .filter(p -> Player.BLACK.equals(currentBoardState.getPieceOnPos(pos).getPlayer()))
                 .collect(Collectors.toSet());
 

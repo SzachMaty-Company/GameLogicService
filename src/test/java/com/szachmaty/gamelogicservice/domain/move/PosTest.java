@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.move;
 
+import com.szachmaty.gamelogicservice.domain.board.BoardState;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ class PosTest {
 
         // when
         var validPoses = poses.stream()
-                .filter(Pos::isPosValid)
+                .filter(BoardState::isPosValid)
                 .toList();
 
         // then
@@ -45,7 +46,7 @@ class PosTest {
 
         // when
         var validPoses = poses.stream()
-                .filter(Pos::isPosValid)
+                .filter(BoardState::isPosValid)
                 .toList();
 
         // then

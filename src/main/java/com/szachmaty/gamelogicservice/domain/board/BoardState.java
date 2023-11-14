@@ -26,6 +26,13 @@ public class BoardState {
                 .orElse(null);
     }
 
+    public static boolean isPosValid(Pos pos) {
+        var isFileValid = pos.file() >= 1 && pos.file() <= 8;
+        var isRankValid = pos.rank() >= 1 && pos.rank() <= 8;
+
+        return isFileValid && isRankValid;
+    }
+
     public static BoardState makeMove(BoardState boardState, Move move) {
         return null;
     }
@@ -35,7 +42,10 @@ public class BoardState {
     }
 
     public boolean isPosOnWhiteBackRank(Pos pos) {
-        return false;
-//        return pos.
+        return pos.rank() == 1;
+    }
+
+    public boolean isPosOnBlackBackRank(Pos pos) {
+        return pos.rank() == 8;
     }
 }

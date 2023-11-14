@@ -34,11 +34,7 @@ public record Pos(int file, int rank) {
             throw new IllegalArgumentException("Invalid character at index 1");
         }
 
-        var pos = new Pos(file, rank);
-        if (!isPosValid(pos)) {
-            throw new InvalidPosException("Pos is invalid: " + pos.toSimpleString());
-        }
-        return pos;
+        return new Pos(file, rank);
     }
 
     public String toSimpleString() {
@@ -46,17 +42,10 @@ public record Pos(int file, int rank) {
     }
 
     public String toCanonicalString() {
-        return xToLabel() + this.rank;
+        return toFile() + this.rank;
     }
 
-    public static boolean isPosValid(Pos pos) {
-        var isFileValid = pos.file >= 1 && pos.file <= 8;
-        var isRankValid = pos.rank >= 1 && pos.rank <= 8;
-
-        return isFileValid && isRankValid;
-    }
-
-    private String xToLabel() {
+    private String toFile() {
         return String.valueOf(FILES.charAt(file));
     }
 
