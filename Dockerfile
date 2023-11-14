@@ -1,6 +1,5 @@
-FROM gradle:8.4.0-jdk17-alpine
+FROM openjdk:17-oracle
 LABEL maintainer="SzachMatyCompany"
-WORKDIR /app
-COPY /build/libs/GameLogicService.jar GameLogicService.jar
+COPY /build/libs/GameLogicService-0.0.1-SNAPSHOT.jar GameLogicService.jar
 EXPOSE 8080
-CMD ["/java", "-jar", "/app/GameLogicService.jar"]
+ENTRYPOINT ["java", "-jar", "/GameLogicService.jar"]
