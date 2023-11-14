@@ -107,7 +107,7 @@ public class PawnMove {
             possibleCaptures.add(normalCapture2);
         }
 
-        var captures =  possibleCaptures.stream()
+        var captures = possibleCaptures.stream()
                 .filter(BoardState::isPosValid)
                 .collect(Collectors.toSet());
 

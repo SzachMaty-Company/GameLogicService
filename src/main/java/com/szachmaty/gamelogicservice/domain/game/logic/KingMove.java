@@ -4,8 +4,12 @@ import com.szachmaty.gamelogicservice.domain.board.Board;
 import com.szachmaty.gamelogicservice.domain.board.piece.PieceType;
 import com.szachmaty.gamelogicservice.domain.move.Move;
 import com.szachmaty.gamelogicservice.domain.move.Pos;
+import com.szachmaty.gamelogicservice.domain.player.Player;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class KingMove {
 
@@ -26,6 +30,26 @@ public class KingMove {
             case WHITE -> getKingMovesForWhite(board, from);
             case BLACK -> getKingMovesForBlack(board, from);
         };
+    }
+
+    private boolean isKingSafe(Board board) {
+        var king = board.getCurrentBoardState().getPieces().stream()
+                .filter(p -> p.getType() == PieceType.KING)
+                .filter(p -> p.getPlayer() == board.getCurrentBoardState().getPlayerToMove())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("King not found on the board"));
+
+        var possibleAttackingPieces = board.getCurrentBoardState().getPieces().stream()
+                .filter(p -> p.getType() != PieceType.KING)
+                .filter(p -> p.getPlayer() != board.getCurrentBoardState().getPlayerToMove())
+                .toList();
+
+        var isKingSafe = possibleAttackingPieces.stream()
+                .map(p -> PieceMove.getPieceCaptures(board, p.getPos()))
+                .filter(Objects::nonNull)
+                .allMatch(captures -> !captures.contains(king.getPos()));
+
+        return isKingSafe;
     }
 
     private static Set<Move> getKingMovesForWhite(Board board, Pos from) {
