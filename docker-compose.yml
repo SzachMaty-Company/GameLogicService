@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+  game-logic:
+    container_name: game-logic
+    depends_on:
+      - redis
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
