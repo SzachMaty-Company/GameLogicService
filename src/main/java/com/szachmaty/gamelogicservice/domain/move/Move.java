@@ -1,6 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.move;
 
-import com.szachmaty.gamelogicservice.domain.board.piece.PieceType;
+import com.szachmaty.gamelogicservice.domain.move.piece.PieceType;
 import com.szachmaty.gamelogicservice.domain.move.exception.IllegalMoveException;
 
 // TODO: what about pawn promotion?

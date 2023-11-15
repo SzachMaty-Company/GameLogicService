@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.domain.board.piece;
+package com.szachmaty.gamelogicservice.domain.move.piece;
 
 import com.szachmaty.gamelogicservice.domain.move.Pos;
 import com.szachmaty.gamelogicservice.domain.player.Player;
