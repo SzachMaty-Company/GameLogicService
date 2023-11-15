@@ -47,7 +47,7 @@ public class KingMove {
         var isKingSafe = possibleAttackingPieces.stream()
                 .map(p -> PieceMove.getPieceCaptures(board, p.getPos()))
                 .filter(Objects::nonNull)
-                .allMatch(captures -> !captures.contains(king.getPos()));
+                .noneMatch(captures -> captures.contains(king.getPos()));
 
         return isKingSafe;
     }

@@ -10,12 +10,23 @@ public enum PieceType {
 
         return switch (labelInLowerCase) {
             case 'p' -> PAWN;
-            case 'b' -> BISHOP;
             case 'n' -> KNIGHT;
+            case 'b' -> BISHOP;
             case 'r' -> ROOK;
             case 'k' -> KING;
             case 'q' -> QUEEN;
             default -> throw new IllegalStateException("Invalid piece label provided: " + label);
+        };
+    }
+
+    public static String toLabel(PieceType type) {
+        return switch (type) {
+            case PAWN -> "p";
+            case KNIGHT -> "n";
+            case BISHOP -> "b";
+            case ROOK -> "r";
+            case QUEEN -> "q";
+            case KING -> "k";
         };
     }
 

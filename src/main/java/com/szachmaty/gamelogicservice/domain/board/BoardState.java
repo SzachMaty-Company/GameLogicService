@@ -1,6 +1,7 @@
 package com.szachmaty.gamelogicservice.domain.board;
 
 import com.szachmaty.gamelogicservice.domain.board.piece.Piece;
+import com.szachmaty.gamelogicservice.domain.board.piece.PieceType;
 import com.szachmaty.gamelogicservice.domain.move.Move;
 import com.szachmaty.gamelogicservice.domain.move.Pos;
 import com.szachmaty.gamelogicservice.domain.player.Player;
@@ -49,5 +50,40 @@ public class BoardState {
     // blacks start from 8th rank
     public boolean isPosOnBlackBackRank(Pos pos) {
         return pos.rank() == 8;
+    }
+
+    @Override
+    public String toString() {
+        final var BOARD_SIZE = 8;
+        var arrayBoard = new String[BOARD_SIZE][BOARD_SIZE];
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                arrayBoard[i][j] = ".";
+            }
+        }
+
+        for (var piece : pieces) {
+            var i = piece.getPos().rank() - 1;
+            var j = piece.getPos().file() - 1;
+
+            var label = PieceType.toLabel(piece.getType());
+
+            arrayBoard[j][i] = piece.getPlayer() == Player.WHITE ? label.toUpperCase() : label.toLowerCase();
+        }
+
+        var boardString = new StringBuilder();
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            boardString.append(8 - i);
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                boardString.append(arrayBoard[j][i]);
+                boardString.append(" ");
+            }
+            boardString.append("\n");
+        }
+
+        boardString.append(" A B C D E F G H");
+
+        return boardString.toString();
     }
 }
