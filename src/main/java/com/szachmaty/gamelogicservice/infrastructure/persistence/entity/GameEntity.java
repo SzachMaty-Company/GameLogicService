@@ -4,22 +4,28 @@ import com.szachmaty.gamelogicservice.infrastructure.persistence.entity.enumerat
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RedisHash("Game")
+@RedisHash("game")
+@TypeAlias("GameEntity.class")
 @Getter
 @Setter
 @Builder
+@ToString
 public class GameEntity {
     @Id
     private long gameId;
     private UserEntity whiteUser;
     private UserEntity blackUser;
+    @ToString.Exclude
     private LocalDateTime whiteTime;
+    @ToString.Exclude
     private LocalDateTime blackTime;
     private GameStatus gameStatus;
     private List<MoveEntity> moveList;

@@ -41,7 +41,7 @@ class GameEntityRepositoryTest {
                 null, null , NOT_STARTED, null);
         List<MoveEntity> moves = List.of(new MoveEntity(1L,"Nf3"), new MoveEntity(2L, "e4e5"),
                 new MoveEntity(3L, "Bb4+"));
-        propertiesSetup(3L, null, null,
+        propertiesSetup(3L, new UserEntity(1L , "Marcin"), new UserEntity(2L, "Łukasz"),
                 null, null , NOT_STARTED, moves);
     }
 
