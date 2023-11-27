@@ -1,15 +1,12 @@
 package com.szachmaty.gamelogicservice.domain.game.logic;
 
 import com.szachmaty.gamelogicservice.domain.board.Board;
-import com.szachmaty.gamelogicservice.domain.board.piece.PieceType;
+import com.szachmaty.gamelogicservice.domain.move.piece.PieceType;
 import com.szachmaty.gamelogicservice.domain.move.Move;
 import com.szachmaty.gamelogicservice.domain.move.Pos;
-import com.szachmaty.gamelogicservice.domain.player.Player;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class KingMove {
 
