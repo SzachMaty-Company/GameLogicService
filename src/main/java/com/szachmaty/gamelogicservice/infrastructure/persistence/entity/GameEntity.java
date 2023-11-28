@@ -1,10 +1,7 @@
 package com.szachmaty.gamelogicservice.infrastructure.persistence.entity;
 
 import com.szachmaty.gamelogicservice.infrastructure.persistence.entity.enumeration.GameStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.redis.core.RedisHash;
@@ -13,13 +10,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RedisHash("game")
+import static com.szachmaty.gamelogicservice.infrastructure.persistence.constants.EntityConstants.GAME_HASH;
+
+@RedisHash(GAME_HASH)
 @TypeAlias("GameEntity.class")
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 @ToString
 public class GameEntity implements Serializable {
+
     @Id
     private long gameId;
     private UserEntity whiteUser;
@@ -29,7 +30,7 @@ public class GameEntity implements Serializable {
     @ToString.Exclude
     private LocalDateTime blackTime;
     private GameStatus gameStatus;
-    private String currentBoard;
+    private List<String> boardList;
     private List<MoveEntity> moveList;
 
 }

@@ -1,17 +1,14 @@
 package com.szachmaty.gamelogicservice.infrastructure.persistence.repository.impl;
 
-import com.szachmaty.gamelogicservice.domain.game.Game;
 import com.szachmaty.gamelogicservice.infrastructure.persistence.entity.GameEntity;
 import com.szachmaty.gamelogicservice.infrastructure.persistence.entity.UserEntity;
 import com.szachmaty.gamelogicservice.infrastructure.persistence.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.infrastructure.persistence.repository.GameEntityDao;
-import com.szachmaty.gamelogicservice.infrastructure.persistence.repository.impl.GameEntityDaoImpl;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 
@@ -21,6 +18,9 @@ class GameEntityDaoImplTest {
     @Autowired
     public GameEntityDao gameEntityDao;
     private GameEntity gameEntity;
+
+    @Autowired
+    private RedisTemplate<String, Object> template;
 
     @BeforeEach
     public void setup() {
@@ -32,7 +32,7 @@ class GameEntityDaoImplTest {
                 .blackTime(null)
                 .gameStatus(GameStatus.NOT_STARTED)
                 .moveList(new ArrayList<>())
-                .currentBoard("")
+                .boardList(new ArrayList<>())
                 .build();
     }
     @Test
@@ -85,9 +85,9 @@ class GameEntityDaoImplTest {
                 .build();
         return updatedGameEntity;
     }
-    @AfterEach
-    public void clearRedisCache() {
-
-    }
+//    @AfterAll
+//    public void clearRedisCache() {
+//        template.getConnectionFactory().getConnection().flushAll();
+//    }
 
 }

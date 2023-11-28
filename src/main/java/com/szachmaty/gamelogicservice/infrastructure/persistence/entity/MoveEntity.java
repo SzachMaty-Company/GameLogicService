@@ -7,11 +7,13 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 
-@RedisHash("move")
+import static com.szachmaty.gamelogicservice.infrastructure.persistence.constants.EntityConstants.MOVE_HASH;
+
+
+@RedisHash(MOVE_HASH)
 @TypeAlias("MoveEntity.class")
 @AllArgsConstructor
 @NoArgsConstructor
