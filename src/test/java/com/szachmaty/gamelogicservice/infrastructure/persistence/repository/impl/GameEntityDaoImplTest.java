@@ -32,6 +32,7 @@ class GameEntityDaoImplTest {
                 .blackTime(null)
                 .gameStatus(GameStatus.NOT_STARTED)
                 .moveList(new ArrayList<>())
+                .currentBoard("")
                 .build();
     }
     @Test
@@ -41,6 +42,7 @@ class GameEntityDaoImplTest {
         GameEntity retrivedGame = gameEntityDao.findGameById(1);
 
         assertEquals(1,retrivedGame.getGameId());
+        assertEquals(1,retrivedGame.getWhiteUser().getUserId());
     }
     @Test
     public void saveGameTest() {

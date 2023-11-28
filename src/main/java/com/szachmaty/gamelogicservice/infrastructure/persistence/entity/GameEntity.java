@@ -29,6 +29,7 @@ public class GameEntity implements Serializable {
     @ToString.Exclude
     private LocalDateTime blackTime;
     private GameStatus gameStatus;
+    private String currentBoard;
     private List<MoveEntity> moveList;
 
 }

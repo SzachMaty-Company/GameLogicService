@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface GameEntityDao {
 
-    //By default GameEntityDao performs Lazy Loading
-
     GameEntity findGameById(long gameId);
 
     List<GameEntity> findAllGames();
