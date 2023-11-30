@@ -1,7 +1,7 @@
 package com.szachmaty.gamelogicservice.infrastructure.persistence.dao;
 
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
-import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -29,17 +29,6 @@ public class GameEntityDaoImpl implements GameEntityDao {
         }
         return null;
     }
-
-    @Override
-    public GameEntity findGameSubsetByWhiteUser(long gameId) {
-        return null;
-    }
-
-    @Override
-    public GameEntity findGameSubsetByBlackUser(long gameId) {
-        return null;
-    }
-
     @Override
     public List<GameEntity> findAllGames() {
         List<Object> objectList = template.opsForHash().values(GAME_HASH);
@@ -65,8 +54,8 @@ public class GameEntityDaoImpl implements GameEntityDao {
     }
 
     @Override
-    public GameEntity deleteGame(GameEntity game) {
-        return null;
+    public void deleteGame(GameEntity game) {
+        template.opsForHash().delete(GAME_HASH, game);
     }
 
     @Override

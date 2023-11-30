@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.infrastructure.persistence.dao;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
-import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
@@ -31,8 +32,8 @@ class GameEntityDaoImplTest {
                 .whiteTime(null)
                 .blackTime(null)
                 .gameStatus(GameStatus.NOT_STARTED)
-                .moveList(new ArrayList<>())
-                .boardList(new ArrayList<>())
+                .moveList(new LinkedList<>())
+                .boardStateList(new ArrayList<>())
                 .build();
     }
     @Test
@@ -46,6 +47,7 @@ class GameEntityDaoImplTest {
     }
     @Test
     public void getNullGameTest() {
+        gameEntityDao.saveGame(gameEntity);
         GameEntity retrivedGame = gameEntityDao.findGameById(110230123);
 
         assertNull(retrivedGame);

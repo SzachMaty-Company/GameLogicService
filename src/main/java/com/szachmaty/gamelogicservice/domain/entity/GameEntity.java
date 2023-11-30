@@ -18,6 +18,7 @@ import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.GA
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class GameEntity implements Serializable {
 
@@ -30,7 +31,7 @@ public class GameEntity implements Serializable {
     @ToString.Exclude
     private LocalDateTime blackTime;
     private GameStatus gameStatus;
-    private List<String> boardList;
+    private List<String> boardStateList;
     private List<MoveEntity> moveList;
 
 }
