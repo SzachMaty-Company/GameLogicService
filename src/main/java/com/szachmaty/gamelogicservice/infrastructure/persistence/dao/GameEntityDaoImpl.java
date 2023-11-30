@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.GAME_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.GAME_HASH;
 
 @Repository
 public class GameEntityDaoImpl implements GameEntityDao {

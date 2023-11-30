@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 
@@ -12,9 +13,9 @@ import java.util.List;
 @Setter
 public class GameBlackPlayerDTO extends GameStateDTO {
 
-    private LocalDateTime blackTime; //TO BE CHANGED
+    private LocalTime blackTime;
 
-    public GameBlackPlayerDTO(long gameId, List<String> boardStateList, LocalDateTime blackTime) {
+    public GameBlackPlayerDTO(long gameId, List<String> boardStateList, LocalTime blackTime) {
         super(gameId,boardStateList);
         this.blackTime = blackTime;
     }

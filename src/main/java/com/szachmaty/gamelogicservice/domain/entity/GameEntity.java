@@ -7,10 +7,10 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
-import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.GAME_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.GAME_HASH;
 
 @RedisHash(GAME_HASH)
 @TypeAlias("GameEntity.class")
@@ -27,9 +27,9 @@ public class GameEntity implements Serializable {
     private UserEntity whiteUser;
     private UserEntity blackUser;
     @ToString.Exclude
-    private LocalDateTime whiteTime;
+    private LocalTime whiteTime;
     @ToString.Exclude
-    private LocalDateTime blackTime;
+    private LocalTime blackTime;
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private List<MoveEntity> moveList;
