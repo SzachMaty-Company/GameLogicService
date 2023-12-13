@@ -1,10 +1,11 @@
 package com.szachmaty.gamelogicservice.application.manager;
 
-import com.szachmaty.gamelogicservice.domain.dto.GameBlackPlayerDTO;
-import com.szachmaty.gamelogicservice.domain.dto.GameWhitePlayerDTO;
+import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
+import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 
 public interface GameDTOManager {
-    GameWhitePlayerDTO getGameStateForWhitePlayerById(long gameId);
-    GameBlackPlayerDTO getGameStateForBlackPlayerById(long gameId);
-
+    GameWPlDTO getGameStateWPlById(long gameId);
+    GameBPlDTO getGameStateBPlById(long gameId);
+    void saveGameStateWPl(GameWPlDTO gameWPlDTO);
+    void saveGameStateBPl(GameBPlDTO gameBPlDTO);
 }
