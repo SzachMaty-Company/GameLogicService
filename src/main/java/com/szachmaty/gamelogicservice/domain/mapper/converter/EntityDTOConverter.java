@@ -1,18 +1,12 @@
 package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
-import com.szachmaty.gamelogicservice.application.game.Game;
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
-import com.szachmaty.gamelogicservice.domain.dto.GameStateDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
-import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
-import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
-import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.domain.mapper.provider.MapperProvider;
 import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.domain.repository.exception.GameDTOEntityConversionException;
 import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityDTOConversionException;
 import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -55,19 +49,32 @@ public class EntityDTOConverter implements GameDTOManager {
         ModelMapper modelMapper = mapperProvider.gameEntityDTOMapper(GameBPlDTO.class);
         GameBPlDTO gameBPlDTO = modelMapper.map(game, GameBPlDTO.class);
         if(gameBPlDTO == null) {
-            throw new GameEntityDTOConversionException("Cannot convert: " + GameEntity.class + "to " + GameBPlDTO.class);
+            throw new GameEntityDTOConversionException("Cannot convert: " +
+                    GameEntity.class + "to " + GameBPlDTO.class);
         }
         return gameBPlDTO;
     }
 
     @Override
     public void saveGameStateWPl(GameWPlDTO gameWPlDTO) {
-
+         ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameWPlDTO.class);
+         GameEntity gameEntity = modelMapper.map(GameWPlDTO.class, GameEntity.class);
+         if(gameEntity == null) {
+             throw new GameDTOEntityConversionException("Cannot convert: " +
+                     GameWPlDTO.class + "to " + GameEntity.class);
+         }
+         gameEntityDao.updateGame(gameEntity);
     }
 
     @Override
     public void saveGameStateBPl(GameBPlDTO gameBPlDTO) {
-
+        ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameBPlDTO.class);
+        GameEntity gameEntity = modelMapper.map(GameBPlDTO.class, GameEntity.class);
+        if(gameEntity == null) {
+            throw new GameDTOEntityConversionException("Cannot convert: " +
+                    GameBPlDTO.class + "to " + GameEntity.class);
+        }
+        gameEntityDao.updateGame(gameEntity);
     }
 
 }

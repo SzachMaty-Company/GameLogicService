@@ -1,6 +1,7 @@
 package com.szachmaty.gamelogicservice.application.manager;
 
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
+import com.szachmaty.gamelogicservice.domain.dto.GameStateDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 
 public interface GameDTOManager {

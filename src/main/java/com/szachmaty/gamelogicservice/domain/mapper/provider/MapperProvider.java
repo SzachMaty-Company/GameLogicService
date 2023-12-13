@@ -32,6 +32,25 @@ public class MapperProvider implements Mapper {
         return modelMapper;
     }
 
+    @Override
+    public ModelMapper gameDTOEntityMapper(Class<? extends GameStateDTO> clazz) {
+        ModelMapper modelMapper = modelMapper();
+        modelMapper.typeMap(clazz, GameEntity.class)
+                .addMappings(mapper -> {
+                    if(clazz.isAssignableFrom(GameWPlDTO.class)) {
+                        mapper.map(src -> ((GameWPlDTO)src).getWPlDTO().getUsername(),
+                                (dest , val) -> dest.getWhiteUser().setUsername((String) val));
+                    } else if(clazz.isAssignableFrom(GameBPlDTO.class)) {
+                        mapper.map(src -> ((GameBPlDTO)src).getBPlDTO().getUsername(),
+                                (dest,val) ->  dest.getBlackUser().setUsername((String)val));
+                    } else {
+                        throw new IncorrectConvertTypeException("Cannot convert from: " + clazz + " to" + GameEntity.class +
+                                " beacause GameStateDTO is not a superclass of " + clazz);
+                    }
+                });
+        return modelMapper;
+    }
+
     private ModelMapper modelMapper() {
         return new ModelMapper();
     }
