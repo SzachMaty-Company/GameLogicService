@@ -7,5 +7,5 @@ import org.modelmapper.ModelMapper;
 public interface Mapper {
     ModelMapper gameEntityDTOMapper(Class<? extends GameStateDTO> clazz);
 
-    ModelMapper gameDTOEntityMapper(Class<? extends GameStateDTO> gameWPlDTOClass);
+    ModelMapper gameDTOEntityMapper(Class<? extends GameStateDTO> clazz);
 }

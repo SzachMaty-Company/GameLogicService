@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

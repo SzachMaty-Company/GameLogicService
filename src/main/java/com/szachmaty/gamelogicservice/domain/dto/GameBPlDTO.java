@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,9 @@ public class GameBPlDTO extends GameStateDTO {
         super(gameId,boardStateList);
         this.blackTime = blackTime;
         this.bPlDTO = bPlDTO;
+    }
+    public GameBPlDTO() {
+        super();
     }
     @Override
     public String toString() {

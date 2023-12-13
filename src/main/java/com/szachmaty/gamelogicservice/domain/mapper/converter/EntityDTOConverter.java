@@ -58,7 +58,7 @@ public class EntityDTOConverter implements GameDTOManager {
     @Override
     public void saveGameStateWPl(GameWPlDTO gameWPlDTO) {
          ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameWPlDTO.class);
-         GameEntity gameEntity = modelMapper.map(GameWPlDTO.class, GameEntity.class);
+         GameEntity gameEntity = modelMapper.map(gameWPlDTO, GameEntity.class);
          if(gameEntity == null) {
              throw new GameDTOEntityConversionException("Cannot convert: " +
                      GameWPlDTO.class + "to " + GameEntity.class);
@@ -69,7 +69,7 @@ public class EntityDTOConverter implements GameDTOManager {
     @Override
     public void saveGameStateBPl(GameBPlDTO gameBPlDTO) {
         ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameBPlDTO.class);
-        GameEntity gameEntity = modelMapper.map(GameBPlDTO.class, GameEntity.class);
+        GameEntity gameEntity = modelMapper.map(gameBPlDTO, GameEntity.class);
         if(gameEntity == null) {
             throw new GameDTOEntityConversionException("Cannot convert: " +
                     GameBPlDTO.class + "to " + GameEntity.class);
