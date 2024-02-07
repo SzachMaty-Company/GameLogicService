@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.domain.constants;
+package com.szachmaty.gamelogicservice.domain.entity.constants;
 
 public class EntityConstants {
     public final static String USER_HASH = "User";

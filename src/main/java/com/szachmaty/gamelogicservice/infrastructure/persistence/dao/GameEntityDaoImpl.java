@@ -2,6 +2,9 @@ package com.szachmaty.gamelogicservice.infrastructure.persistence.dao;
 
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityCastException;
+import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityException;
+import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -9,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.GAME_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.GAME_HASH;
 
 @Repository
 public class GameEntityDaoImpl implements GameEntityDao {
@@ -24,10 +27,14 @@ public class GameEntityDaoImpl implements GameEntityDao {
     @Override
     public GameEntity findGameById(long gameId) {
         Object retrievedObject = template.opsForHash().get(GAME_HASH, gameId);
+        if(retrievedObject == null) {
+            return null;
+        }
         if(retrievedObject instanceof GameEntity) {
             return (GameEntity) retrievedObject;
+        } else {
+            throw new GameEntityCastException("Cannot cast to GameEntity object!");
         }
-        return null;
     }
     @Override
     public List<GameEntity> findAllGames() {

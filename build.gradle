@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'redis.clients', name: 'jedis'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
+    implementation 'junit:junit:4.13.1'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.7.0'
     implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '3.2.0'
     compileOnly 'org.projectlombok:lombok'

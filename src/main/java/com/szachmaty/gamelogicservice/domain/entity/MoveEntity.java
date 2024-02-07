@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.MOVE_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.MOVE_HASH;
 
 
 @RedisHash(MOVE_HASH)

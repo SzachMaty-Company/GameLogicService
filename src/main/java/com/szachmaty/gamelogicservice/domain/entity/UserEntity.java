@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-import static com.szachmaty.gamelogicservice.domain.constants.EntityConstants.USER_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.USER_HASH;
 
 @RedisHash(USER_HASH)
 @TypeAlias("UserEntity.class")
