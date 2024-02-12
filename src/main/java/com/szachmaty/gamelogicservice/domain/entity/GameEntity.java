@@ -24,6 +24,7 @@ public class GameEntity implements Serializable {
 
     @Id
     private long gameId;
+    private String gameCode;
     private UserEntity whiteUser;
     private UserEntity blackUser;
     @ToString.Exclude

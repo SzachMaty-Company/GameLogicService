@@ -8,6 +8,7 @@ import java.util.List;
 public class GameStateDTO {
 
     private long gameId;
+    private String gameCode;
     private List<String> boardStateList;
 
     public GameStateDTO(long gameId, List<String> boardStateList) {

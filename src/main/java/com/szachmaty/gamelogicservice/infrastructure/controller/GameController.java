@@ -1,21 +1,31 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller;
 
 import com.szachmaty.gamelogicservice.application.service.GameService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateRequest;
+import com.szachmaty.gamelogicservice.infrastructure.controller.validations.CustomValidator;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.APIRoutes.GAME_INIT;
 
 @RestController
-@RequestMapping("/game")
+@RequiredArgsConstructor
+@Validated
 public class GameController {
 
-    private GameService gameService;
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
-    }
+    private final GameService gameService;
 
-    @GetMapping
-    public String getGame() {
-        return gameService.getGame();
+    @PostMapping(path = GAME_INIT)
+    public ResponseEntity<String> createGame(
+            @RequestBody
+            @CustomValidator
+            GameCreateRequest gCR
+    ) {
+        return new ResponseEntity<>(gameService.createGame(gCR), HttpStatus.OK);
     }
 }

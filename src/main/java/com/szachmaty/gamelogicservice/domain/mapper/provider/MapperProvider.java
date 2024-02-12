@@ -51,7 +51,7 @@ public class MapperProvider implements Mapper {
         return modelMapper;
     }
 
-    private ModelMapper modelMapper() {
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 }

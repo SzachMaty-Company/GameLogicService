@@ -8,4 +8,6 @@ public interface Mapper {
     ModelMapper gameEntityDTOMapper(Class<? extends GameStateDTO> clazz);
 
     ModelMapper gameDTOEntityMapper(Class<? extends GameStateDTO> clazz);
+
+    ModelMapper modelMapper();
 }

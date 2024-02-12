@@ -2,6 +2,7 @@ package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
+import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
@@ -75,6 +76,13 @@ public class EntityDTOConverter implements GameDTOManager {
                     GameBPlDTO.class + "to " + GameEntity.class);
         }
         gameEntityDao.updateGame(gameEntity);
+    }
+
+    @Override
+    public void saveNewGame(GameDTO gameDTO) {
+        GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
+        System.out.println(gameEntity);
+        gameEntityDao.saveGame(gameEntity);
     }
 
 }
