@@ -62,7 +62,7 @@ public class GameEntityDaoImpl implements GameEntityDao {
 
     @Override
     public void deleteGame(GameEntity game) {
-        template.opsForHash().delete(GAME_HASH, game);
+        template.opsForHash().delete(GAME_HASH, game.getGameId());
     }
 
     @Override

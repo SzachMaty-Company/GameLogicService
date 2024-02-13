@@ -1,0 +1,4 @@
+external:
+  service:
+    user-service:
+      url: "http://user-service:8000"

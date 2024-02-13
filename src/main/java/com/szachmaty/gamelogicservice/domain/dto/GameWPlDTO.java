@@ -23,6 +23,6 @@ public class GameWPlDTO extends GameStateDTO {
     }
     @Override
     public String toString() {
-        return wPlDTO.getUsername() + " " + getGameId() + " " + getBoardStateList().get(0);
+        return wPlDTO.getUsername() + " " + getGameId();
     }
 }

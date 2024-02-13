@@ -15,7 +15,5 @@ public class GameStateDTO {
         this.gameId = gameId;
         this.boardStateList = boardStateList;
     }
-    public GameStateDTO() {
-
-    }
+    public GameStateDTO() {}
 }

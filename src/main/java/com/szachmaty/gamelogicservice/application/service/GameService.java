@@ -7,13 +7,12 @@ import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClient;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.CheckPlayerResp;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCheckPlayerReq;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateReq;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.*;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ import java.util.ArrayList;
 @Slf4j
 public class GameService {
     private final GameDTOManager gameDTOManager;
-    private final GameClient gameClient;
-    public String getGame() {
-        GameWPlDTO bialas = gameDTOManager.getGameStateWPlById(1);
+
+    public GameWPlDTO getGame() {
+        GameWPlDTO bialas = gameDTOManager.getGameStateWPlById(0);
         log.info(bialas.toString());
-        return "działą";
+        return bialas;
     }
 
     public GameInitResp createGame(GameCreateReq gCR) {
@@ -58,9 +57,14 @@ public class GameService {
                 .oponent(gCR.player2())
                 .gameCode(gameCode)
                 .build();
-        CheckPlayerResp res;
-//        gameClient.getTestEntries();
-        res = gameClient.checkIfPlayerExists(gameCheckPlayerReq);
+        CheckPlayerResp res = null;
+        try {
+//            res = gameClient.checkIfPlayerExists(gameCheckPlayerReq);
+              res = new CheckPlayerResp(true); //MOCKED
+        } catch(Exception e) {
+            gameDTOManager.deleteGame(gameDTO);
+            throw e;
+        }
 
         if(res != null && res.isPlayer2Exists()) {
             return new GameInitResp(gameCode);

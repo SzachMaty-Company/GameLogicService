@@ -88,6 +88,7 @@ public class EntityDTOConverter implements GameDTOManager {
     @Override
     public void deleteGame(GameDTO gameDTO) {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
+        System.out.println(gameEntity);
         gameEntityDao.deleteGame(gameEntity);
     }
 

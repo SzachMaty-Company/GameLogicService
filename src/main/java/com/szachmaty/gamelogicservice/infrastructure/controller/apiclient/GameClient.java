@@ -10,7 +10,7 @@ import java.util.List;
 import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.APIRoutes.GAME_CHECK_PLAYER;
 
 
-@FeignClient(url = "https://api.publicapis.org", name = "GAME-CLIENT", configuration = FeignGameClientConfiguration.class)
+@FeignClient(url = "${external.service.user-service.url}", name = "GAME-CLIENT", configuration = FeignGameClientConfiguration.class)
 public interface GameClient {
     @GetMapping("/entries")
     List<Object> getTestEntries();

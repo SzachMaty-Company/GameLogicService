@@ -12,4 +12,5 @@ public class UserDTO {
     public UserDTO(String username) {
         this.username = username;
     }
+    public UserDTO() {}
 }
