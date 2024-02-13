@@ -11,4 +11,6 @@ public interface GameDTOManager {
     void saveGameStateWPl(GameWPlDTO gameWPlDTO);
     void saveGameStateBPl(GameBPlDTO gameBPlDTO);
     void saveNewGame(GameDTO gameDTO);
+    void deleteGame(GameDTO gameDTO);
+
 }

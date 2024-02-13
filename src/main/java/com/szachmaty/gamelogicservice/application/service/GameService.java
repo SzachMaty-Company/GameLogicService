@@ -7,13 +7,14 @@ import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClient;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.CheckPlayerResp;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCheckPlayerReq;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateRequest;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateReq;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class GameService {
         return "działą";
     }
 
-    public String createGame(GameCreateRequest gCR) {
+    public GameInitResp createGame(GameCreateReq gCR) {
         String gameCode = Util.generateGameCode();
         LocalTime parsedTime = Util.gameTimeParser(gCR.gameTime());
 
@@ -57,17 +58,15 @@ public class GameService {
                 .oponent(gCR.player2())
                 .gameCode(gameCode)
                 .build();
+        CheckPlayerResp res;
 //        gameClient.getTestEntries();
-//        try {
-        try {
-            gameClient.checkIfPlayerExists(gameCheckPlayerReq);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-//        } catch (Exception e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
+        res = gameClient.checkIfPlayerExists(gameCheckPlayerReq);
 
-        return "HA_HA";
+        if(res != null && res.isPlayer2Exists()) {
+            return new GameInitResp(gameCode);
+        } else {
+            gameDTOManager.deleteGame(gameDTO);
+            throw new RuntimeException("Not exists"); //TO BE CHANGED
+        }
     }
 }

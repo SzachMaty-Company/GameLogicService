@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.apiclient;
 
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameClientException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.springframework.http.HttpStatus;
@@ -7,14 +8,14 @@ import org.springframework.http.HttpStatus;
 public class GameErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
-        String requestURL = response.request().url();
+        String resErrorCause = response.reason();
+        System.out.println(resErrorCause); //TO BE ADDED
         HttpStatus httpResStatus = HttpStatus.valueOf(response.status());
         if(httpResStatus.is5xxServerError()) {
-            throw new RuntimeException("ERROR 500!");
+            throw new GameClientException("Internal server error!", httpResStatus);
         } else if(httpResStatus.is4xxClientError()) {
-            throw new RuntimeException("ERROR 400!");
-        } else {
-            return new Exception("BLAD");
+            throw new GameClientException("Client error", httpResStatus);
         }
+        return null;
     }
 }
