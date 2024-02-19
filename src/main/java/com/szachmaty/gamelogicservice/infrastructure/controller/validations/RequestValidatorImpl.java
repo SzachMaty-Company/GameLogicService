@@ -1,6 +1,6 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.validations;
 
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateReq;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
@@ -26,14 +26,14 @@ public class RequestValidatorImpl implements ConstraintValidator<RequestValidato
         if(input == null) {
             return false;
         }
-        if(input instanceof GameCreateReq) {
-            return checkGameCreateRequest((GameCreateReq) input);
+        if(input instanceof GameInitReq) {
+            return checkGameCreateRequest((GameInitReq) input);
         } else {
             throw new RuntimeException("Cannot find input type!");
         }
     }
 
-    private boolean checkGameCreateRequest(GameCreateReq input) {
+    private boolean checkGameCreateRequest(GameInitReq input) {
         boolean isModeValid = StringUtils.containsAny(input.gameMode(), "FRIEND", "AI");
         boolean isGameTimeValid = Pattern.matches(GAME_TIME_REGEX, input.gameTime());
         boolean isPlayersValid =  !input.player1().isBlank() && !input.player2().isBlank();

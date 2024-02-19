@@ -1,17 +1,21 @@
-package com.szachmaty.gamelogicservice.application.util;
+package com.szachmaty.gamelogicservice.application.gameinit;
 
 
 import java.time.LocalTime;
 import java.util.UUID;
 
-public final class Util {
+public final class GameInitUtil {
+
+    /**
+     *
+     * @return uuid
+     */
     public static String generateGameCode() {
         final String uuid = UUID.randomUUID().toString();
         return uuid.replace("-" , "").substring(0, 12);
     }
 
     /**
-     *
      * @param gameTime
      * @return LocalTime in format h:min:sec or min:sec
      */

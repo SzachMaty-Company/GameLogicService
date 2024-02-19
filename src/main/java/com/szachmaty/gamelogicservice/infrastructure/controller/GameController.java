@@ -1,9 +1,8 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller;
 
-import com.szachmaty.gamelogicservice.application.service.GameService;
-import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
+import com.szachmaty.gamelogicservice.application.gameinit.GameInitServiceImpl;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCreateReq;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
 import com.szachmaty.gamelogicservice.infrastructure.controller.validations.RequestValidator;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +18,15 @@ import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.
 @Validated
 public class GameController {
 
-    private final GameService gameService;
+    private final GameInitServiceImpl gameService;
 
     @PostMapping(path = GAME_INIT)
     public ResponseEntity<GameInitResp> createGame(
             @RequestBody
             @RequestValidator
-            GameCreateReq gCR
+            GameInitReq gCR
     ) {
-        return new ResponseEntity<>(gameService.createGame(gCR), HttpStatus.OK);
+        return new ResponseEntity<>(gameService.initGame(gCR), HttpStatus.OK);
     }
     @GetMapping(path = "/games")
     public ResponseEntity<GameWPlDTO> getAllTest() {

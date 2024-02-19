@@ -1,18 +1,14 @@
-package com.szachmaty.gamelogicservice.application.service;
+package com.szachmaty.gamelogicservice.application.gameinit;
 
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
-import com.szachmaty.gamelogicservice.application.util.Util;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
-import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClient;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.*;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,8 +16,10 @@ import java.util.ArrayList;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GameService {
+public class GameInitServiceImpl implements GameInitService {
     private final GameDTOManager gameDTOManager;
+    private final static String AI = "AI";
+    private final static String FRIEND = "FRIEND";
 
     public GameWPlDTO getGame() {
         GameWPlDTO bialas = gameDTOManager.getGameStateWPlById(0);
@@ -29,16 +27,30 @@ public class GameService {
         return bialas;
     }
 
-    public GameInitResp createGame(GameCreateReq gCR) {
-        String gameCode = Util.generateGameCode();
-        LocalTime parsedTime = Util.gameTimeParser(gCR.gameTime());
+    public GameInitResp initGame(GameInitReq initReq) {
+        if(initReq.gameMode().equals(AI)) {
+            return createGameAIvsUser(initReq);
+        } else if(initReq.gameMode().equals(FRIEND)) {
+            return createGameUservsUser(initReq);
+        } else {
+            throw new GameInitException("Incorrect gameMode - " + initReq.gameMode());
+        }
+    }
+
+    private GameInitResp createGameAIvsUser(GameInitReq initReq) {
+        return null; //TO DO
+    }
+
+    private GameInitResp createGameUservsUser(GameInitReq initReq) {
+        String gameCode = GameInitUtil.generateGameCode();
+        LocalTime parsedTime = GameInitUtil.gameTimeParser(initReq.gameTime());
 
         UserDTO whitePlayer = UserDTO.builder()
-                .username(gCR.player1())
+                .username(initReq.player1())
                 .build();
 
         UserDTO blackPlayer = UserDTO.builder()
-                .username(gCR.player2())
+                .username(initReq.player2())
                 .build();
 
         GameDTO gameDTO = GameDTO.builder()
@@ -54,13 +66,13 @@ public class GameService {
 
         gameDTOManager.saveNewGame(gameDTO);
         GameCheckPlayerReq gameCheckPlayerReq = GameCheckPlayerReq.builder()
-                .oponent(gCR.player2())
+                .oponent(initReq.player2())
                 .gameCode(gameCode)
                 .build();
         CheckPlayerResp res = null;
         try {
 //            res = gameClient.checkIfPlayerExists(gameCheckPlayerReq);
-              res = new CheckPlayerResp(true); //MOCKED
+            res = new CheckPlayerResp(true); //MOCKED
         } catch(Exception e) {
             gameDTOManager.deleteGame(gameDTO);
             throw e;
@@ -70,7 +82,7 @@ public class GameService {
             return new GameInitResp(gameCode);
         } else {
             gameDTOManager.deleteGame(gameDTO);
-            throw new RuntimeException("Not exists"); //TO BE CHANGED
+            throw new GameInitException("Not exists!"); //TO BE CHANGED
         }
     }
 }
