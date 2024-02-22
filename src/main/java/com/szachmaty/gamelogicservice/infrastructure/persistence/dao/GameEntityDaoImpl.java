@@ -27,15 +27,15 @@ public class GameEntityDaoImpl implements GameEntityDao {
     @Override
     public GameEntity findGameById(long gameId) {
         Object retrievedObject = template.opsForHash().get(GAME_HASH, gameId);
-        if(retrievedObject == null) {
-            return null;
-        }
-        if(retrievedObject instanceof GameEntity) {
-            return (GameEntity) retrievedObject;
-        } else {
-            throw new GameEntityCastException("Cannot cast to GameEntity object!");
-        }
+        return castObjToGameEntity(retrievedObject);
     }
+
+    @Override
+    public GameEntity findGameByGameCode(String gameCode) {
+        Object retrievedObject = template.opsForHash().get(GAME_HASH, gameCode);
+        return castObjToGameEntity(retrievedObject);
+    }
+
     @Override
     public List<GameEntity> findAllGames() {
         List<Object> objectList = template.opsForHash().values(GAME_HASH);
@@ -70,4 +70,14 @@ public class GameEntityDaoImpl implements GameEntityDao {
         template.opsForHash().delete(GAME_HASH, gameId);
     }
 
+    private GameEntity castObjToGameEntity(Object o) {
+        if(o == null) {
+            return null;
+        }
+        if(o instanceof GameEntity) {
+            return (GameEntity) o;
+        } else {
+            throw new GameEntityCastException("Cannot cast to GameEntity object!");
+        }
+    }
 }

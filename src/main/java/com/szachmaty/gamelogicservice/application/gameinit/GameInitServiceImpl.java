@@ -17,6 +17,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 @Slf4j
 public class GameInitServiceImpl implements GameInitService {
+
     private final GameDTOManager gameDTOManager;
     private final static String AI = "AI";
     private final static String FRIEND = "FRIEND";

@@ -1,7 +1,5 @@
 package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
-import com.szachmaty.gamelogicservice.application.move.Move;
-import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
@@ -9,16 +7,13 @@ import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.provider.MapperProvider;
 import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
