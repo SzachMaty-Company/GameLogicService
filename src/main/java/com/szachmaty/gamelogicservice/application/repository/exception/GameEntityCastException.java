@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.domain.repository.exception;
+package com.szachmaty.gamelogicservice.application.repository.exception;
 
 public class GameEntityCastException extends GameEntityException {
     public GameEntityCastException(String message) {

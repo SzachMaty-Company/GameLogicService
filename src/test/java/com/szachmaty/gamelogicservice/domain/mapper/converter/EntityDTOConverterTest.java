@@ -5,7 +5,7 @@ import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.provider.MapperProvider;
-import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

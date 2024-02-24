@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.infrastructure.persistence.dao;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
-import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

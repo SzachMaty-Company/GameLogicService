@@ -1,6 +1,7 @@
-package com.szachmaty.gamelogicservice.domain.repository;
+package com.szachmaty.gamelogicservice.application.repository;
 
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 

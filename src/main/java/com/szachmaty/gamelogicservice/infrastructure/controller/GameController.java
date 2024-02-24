@@ -7,6 +7,7 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameMoveInf
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
 import com.szachmaty.gamelogicservice.infrastructure.controller.validations.RequestValidator;
+import io.netty.util.internal.SuppressJava6Requirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,13 @@ public class GameController {
         return new ResponseEntity<>(gameService.getGame(), HttpStatus.OK);
     }
 
+    @PostMapping(path = "/move")
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity doMove(@RequestBody GameMoveInfoMessage infoMessage) {
+        gameProcessService.doMove(infoMessage);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @SubscribeMapping("/subscribe")
     public String sendOneTimeMessage() {
         return "Connected to the server"; //onready game
@@ -47,7 +55,7 @@ public class GameController {
     @MessageMapping("/game/{gameCode}")
     @SendTo("/game-queue/{gameCode}")
     public GameMoveInfoMessage processChessMove(@PathVariable("gameCode") String gameCode, GameMoveInfoMessage infoMessage) {
-        gameProcessService.doMove(infoMessage, gameCode);
+//        gameProcessService.doMove(infoMessage, gameCode);
         return infoMessage;
     }
 }

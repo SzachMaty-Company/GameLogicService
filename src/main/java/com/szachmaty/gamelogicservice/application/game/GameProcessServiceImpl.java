@@ -13,13 +13,13 @@ public class GameProcessServiceImpl implements GameProcessService {
     private final GameDTOManager gameDTOManager;
 
     @Override
-    public void doMove(GameMoveInfoMessage gameMove, String gameCode) {
-        String currBoardState = moveValidator.validateMove(gameMove.move(), gameCode);
+    public void doMove(GameMoveInfoMessage gameMove) {
+        String currBoardState = moveValidator.validateMove(gameMove.move(), gameMove.gameCode());
         if(currBoardState != null) {
-            gameDTOManager.updateBoard(gameMove.move(), currBoardState, gameCode);
+            gameDTOManager.updateBoard(gameMove.move(), currBoardState, gameMove.gameCode());
 //            return currBoardState;
         } else {
-//            InValid Move;
+            System.out.println("INVALID MIOVE");
         }
     }
 }

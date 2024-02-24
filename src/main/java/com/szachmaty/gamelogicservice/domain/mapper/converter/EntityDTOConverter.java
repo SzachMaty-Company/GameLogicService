@@ -1,6 +1,5 @@
 package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
-import com.github.bhlangonijr.chesslib.move.Move;
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
@@ -8,14 +7,16 @@ import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.domain.repository.GameEntityDao;
-import com.szachmaty.gamelogicservice.domain.repository.exception.GameDTOEntityConversionException;
-import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityDTOConversionException;
-import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
+import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
+import com.szachmaty.gamelogicservice.application.repository.GameEntityRepository;
+import com.szachmaty.gamelogicservice.application.repository.exception.GameDTOEntityConversionException;
+import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityDTOConversionException;
+import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,12 +24,13 @@ import java.util.List;
 public class EntityDTOConverter implements GameDTOManager {
 
     private final GameEntityDao gameEntityDao;
+    private final GameEntityRepository gameEntityRepository;
     private final Mapper mapperProvider;
-    private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";  //TO BE MOVED
 
     @Autowired
-    public EntityDTOConverter(GameEntityDao gameEntityDao, Mapper mapperProvider) {
+    public EntityDTOConverter(GameEntityDao gameEntityDao, GameEntityRepository gameEntityRepository, Mapper mapperProvider) {
         this.gameEntityDao = gameEntityDao;
+        this.gameEntityRepository = gameEntityRepository;
         this.mapperProvider = mapperProvider;
     }
 
@@ -84,41 +86,50 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public String getCurrBoardStateByGameCode(String gameCode) {
-        GameEntity game = gameEntityDao.findGameByGameCode(gameCode);
+    public List<String> getBoards(String gameCode) {
+        GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
-            List<String> boardList = game.getBoardStateList();
-            return boardList != null && boardList.size() != 0 ? boardList.get(boardList.size() - 1) : INIT_CHESS_BOARD;
+            return game.getBoardStateList();
         } else {
-            return "";
+            throw new GameEntityNotFoundException("Game with given id: " + gameCode + " doesn't exists!");
         }
     }
 
     @Override
     public void updateBoard(String move, String boardState, String gameCode) {
-        GameEntity game = gameEntityDao.findGameByGameCode(gameCode);
+        GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
             List<MoveEntity> moveList = game.getMoveList();
             if(moveList != null) {
                 MoveEntity moveEntity = new MoveEntity();
                 moveEntity.setMove(move);
                 moveList.add(moveEntity);
+            } else {
+                List<MoveEntity> moves = new ArrayList<>();
+                MoveEntity moveEntity = new MoveEntity();
+                moves.add(moveEntity);
+                game.setMoveList(moves);
             }
             List<String> boardStates = game.getBoardStateList();
             if(boardStates != null) {
                 boardStates.add(boardState);
+            } else {
+                List<String> boards = new ArrayList<>();
+                boards.add(boardState);
+                game.setBoardStateList(boards);
             }
-            gameEntityDao.updateGame(game);
+            gameEntityRepository.save(game);
         } else {
-            throw new GameEntityNotFoundException(""); //TO BE CHANGED
+            throw new GameEntityNotFoundException("Cannot find game with gameCode " + gameCode);
         }
     }
 
     @Override
     public void saveNewGame(GameDTO gameDTO) {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
+        gameEntity.setGameId("0");
         System.out.println(gameEntity);
-        gameEntityDao.saveGame(gameEntity);
+        gameEntityRepository.save(gameEntity);
     }
 
     @Override

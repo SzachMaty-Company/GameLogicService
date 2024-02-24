@@ -5,7 +5,7 @@ import com.szachmaty.gamelogicservice.domain.dto.GameStateDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.domain.repository.exception.IncorrectConvertTypeException;
+import com.szachmaty.gamelogicservice.application.repository.exception.IncorrectConvertTypeException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

@@ -10,7 +10,7 @@ import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.UserEntity;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.domain.repository.exception.IncorrectConvertTypeException;
+import com.szachmaty.gamelogicservice.application.repository.exception.IncorrectConvertTypeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;

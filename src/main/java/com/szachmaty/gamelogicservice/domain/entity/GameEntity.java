@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 import java.time.LocalTime;
@@ -23,7 +24,8 @@ import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConst
 public class GameEntity implements Serializable {
 
     @Id
-    private long gameId;
+    private String gameId;
+    @Indexed
     private String gameCode;
     private UserEntity whiteUser;
     private UserEntity blackUser;
