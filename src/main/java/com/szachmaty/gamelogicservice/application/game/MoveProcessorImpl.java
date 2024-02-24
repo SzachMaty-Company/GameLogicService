@@ -11,14 +11,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MoveValidatorImpl implements MoveValidator {
+public class MoveProcessorImpl implements MoveProcessor {
 
     private final GameDTOManager gameDTOManager;
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private final static int MOVE_LEN = 4;
 
     @Override
-    public String validateMove(String currMove, String gameCode) {
+    public String doMove(String currMove, String gameCode) {
         List<String> boards = gameDTOManager.getBoards(gameCode);
         Side side;
         String currBoardState;

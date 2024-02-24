@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.apiclient;
 
+import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.CheckPlayerResp;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameCheckPlayerReq;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.APIRoutes.GAME_CHECK_PLAYER;
+import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.APIRoutes.GAME_FINISH;
 
 
 @FeignClient(url = "${external.service.user-service.url}", name = "GAME-CLIENT", configuration = FeignGameClientConfiguration.class)
@@ -16,4 +18,6 @@ public interface GameClient {
     List<Object> getTestEntries();
     @PostMapping(path = GAME_CHECK_PLAYER)
     CheckPlayerResp checkIfPlayerExists(GameCheckPlayerReq gameCheckPlayer);
+    @PostMapping(path = GAME_FINISH)
+    void sendGameAfterFinish(GameDTO game);
 }

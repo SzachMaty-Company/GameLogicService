@@ -6,6 +6,7 @@ import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
+import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
 import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
 import com.szachmaty.gamelogicservice.application.repository.GameEntityRepository;
@@ -96,7 +97,7 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public void updateBoard(String move, String boardState, String gameCode) {
+    public GameDTO updateBoard(String move, String boardState, String gameCode, boolean isFinished) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
             List<MoveEntity> moveList = game.getMoveList();
@@ -118,7 +119,11 @@ public class EntityDTOConverter implements GameDTOManager {
                 boards.add(boardState);
                 game.setBoardStateList(boards);
             }
-            gameEntityRepository.save(game);
+            if(isFinished) {
+                game.setGameStatus(GameStatus.FINISHED);
+            }
+            GameEntity gameEntity = gameEntityRepository.save(game);
+            return mapperProvider.modelMapper().map(gameEntity, GameDTO.class);
         } else {
             throw new GameEntityNotFoundException("Cannot find game with gameCode " + gameCode);
         }
@@ -136,7 +141,7 @@ public class EntityDTOConverter implements GameDTOManager {
     public void deleteGame(GameDTO gameDTO) {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
         System.out.println(gameEntity);
-        gameEntityDao.deleteGame(gameEntity);
+        gameEntityRepository.delete(gameEntity);
     }
 
 }
