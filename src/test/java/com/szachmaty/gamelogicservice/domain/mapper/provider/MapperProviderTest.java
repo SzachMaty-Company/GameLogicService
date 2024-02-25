@@ -1,6 +1,5 @@
 package com.szachmaty.gamelogicservice.domain.mapper.provider;
 
-import com.szachmaty.gamelogicservice.application.board.BoardState;
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameStateDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
@@ -33,7 +32,6 @@ class MapperProviderTest {
         List<MoveEntity> moveList = new LinkedList<>();
         moveList.add(new MoveEntity(1, "WA1"));
         game = GameEntity.builder()
-                .gameId(1)
                 .whiteUser(new UserEntity(1,"white"))
                 .blackUser(new UserEntity(2, "black"))
                 .whiteTime(null)

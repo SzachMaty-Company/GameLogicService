@@ -31,7 +31,6 @@ class EntityDTOConverterTest {
         List<MoveEntity> moveList = new LinkedList<>();
         moveList.add(new MoveEntity(1, "WA1"));
         game = GameEntity.builder()
-                .gameId(1)
                 .whiteUser(new UserEntity(1,"white"))
                 .blackUser(new UserEntity(2, "black"))
                 .whiteTime(null)

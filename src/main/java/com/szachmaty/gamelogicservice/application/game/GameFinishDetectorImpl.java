@@ -5,14 +5,16 @@ import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishDTO;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GameFinishDetectorImpl implements GameFinishDetector {
 
     private final static int IS_WINNER = 1;
     private final static int NO_WINNER = 0;
 
     @Override
-    public GameFinishDTO checkResultBasedOnBoard(GameDTO gameDTO, String boardState, Side side) {
+    public GameFinishDTO checkResultBasedOnBoard(String boardState, Side side) {
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;
         boolean isDraw;
@@ -27,10 +29,11 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         } else if(isMate && side.equals(Side.BLACK)) {
             isBlackWinner = true;
         }
-        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw);
+        boolean isFinish = isWhiteWinner || isBlackWinner || isDraw;
+        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw, isFinish);
     }
 
-    public GameFinishDTO checkGameResultBasedOnTime(GameDTO gameDTO, String boardState, Side side) {
+    public GameFinishDTO checkResultBasedOnTime(GameDTO gameDTO, String boardState) {
         Long whiteTime = gameDTO.getWhiteTime();
         Long blackTime = gameDTO.getBlackTime();
         boolean isWhiteWinner = false;
@@ -58,7 +61,8 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
             }
 
         }
-        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw);
+        boolean isFinish = isWhiteWinner || isBlackWinner || isDraw;
+        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw, isFinish);
     }
 
     private boolean determineIsDraw(int[] resultArray) {

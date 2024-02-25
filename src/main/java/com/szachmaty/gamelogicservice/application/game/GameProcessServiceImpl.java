@@ -42,25 +42,20 @@ public class GameProcessServiceImpl implements GameProcessService {
 
         if(afterMoveBoardState != null) {
             updateTime(gameDTO, side);
-            gameFinishDetector.checkResultBasedOnBoard(gameDTO, afterMoveBoardState, side);
-            gameFinishDetector.checkGameResultBasedOnTime(gameDTO, afterMoveBoardState, side);
+            GameFinishDTO boardStateFinish = gameFinishDetector.checkResultBasedOnBoard(afterMoveBoardState, side);
+            GameFinishDTO timeFinish = gameFinishDetector.checkResultBasedOnTime(gameDTO, afterMoveBoardState);
 
-            Board board = new Board();
-            board.loadFromFen(afterMoveBoardState);
-            boolean isDraw = board.isDraw();
-            boolean isMated = board.isMated();
-            boolean isFinished = isDraw || isMated;
-            if(isDraw) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, isFinished);
+            if(boardStateFinish != null && boardStateFinish.isFinish()) {
+                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, true);
+                notifyUserDataService(game);
+                return afterMoveBoardState;
+            } else if(timeFinish != null && timeFinish.isFinish()) {
+                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, true);
                 notifyUserDataService(game);
                 return afterMoveBoardState;
             }
-            if(isMated) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, isFinished);
-                notifyUserDataService(game);
-                return afterMoveBoardState;
-            }
-            gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, isFinished);
+
+            gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, false);
             return afterMoveBoardState;
         } else {
             throw new InvalidMoveException("Move: " + move + " is invalid!");
