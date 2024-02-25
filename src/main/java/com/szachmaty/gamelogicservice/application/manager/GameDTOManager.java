@@ -11,7 +11,7 @@ public interface GameDTOManager {
     GameBPlDTO getGameStateBPlById(long gameId);
     void saveGameStateWPl(GameWPlDTO gameWPlDTO);
     void saveGameStateBPl(GameBPlDTO gameBPlDTO);
-    List<String> getBoards(String gameCode);
+    GameDTO getBoards(String gameCode);
     GameDTO updateBoard(String move, String boardState, String gameCode, boolean isFinished);
     void saveNewGame(GameDTO gameDTO);
     void deleteGame(GameDTO gameDTO);

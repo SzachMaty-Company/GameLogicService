@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -30,9 +31,10 @@ public class GameEntity implements Serializable {
     private UserEntity whiteUser;
     private UserEntity blackUser;
     @ToString.Exclude
-    private LocalTime whiteTime;
+    private Long whiteTime;
     @ToString.Exclude
-    private LocalTime blackTime;
+    private Long blackTime;
+    private Long prevMoveTime;
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private List<MoveEntity> moveList;

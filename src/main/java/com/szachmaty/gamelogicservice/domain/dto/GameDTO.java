@@ -6,7 +6,6 @@ import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -15,8 +14,9 @@ public class GameDTO {
     private String gameCode;
     private UserDTO whiteUser;
     private UserDTO blackUser;
-    private LocalTime whiteTime;
-    private LocalTime blackTime;
+    private Long whiteTime;
+    private Long blackTime;
+    private Long prevMoveTime;
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private List<MoveEntity> moveList;

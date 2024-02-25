@@ -44,7 +44,7 @@ public class GameInitServiceImpl implements GameInitService {
 
     private GameInitResp createGameUservsUser(GameInitReq initReq) {
         String gameCode = GameInitUtil.generateGameCode();
-        LocalTime parsedTime = GameInitUtil.gameTimeParser(initReq.gameTime());
+        Long parsedTime = GameInitUtil.gameTimeParser(initReq.gameTime());
 
         UserDTO whitePlayer = UserDTO.builder()
                 .username(initReq.player1())

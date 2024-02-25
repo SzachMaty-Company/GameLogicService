@@ -87,10 +87,11 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public List<String> getBoards(String gameCode) {
+    public GameDTO getBoards(String gameCode) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
-        if(game != null) {
-            return game.getBoardStateList();
+        GameDTO gameDTO = mapperProvider.modelMapper().map(game, GameDTO.class);
+        if(gameDTO != null) {
+            return gameDTO;
         } else {
             throw new GameEntityNotFoundException("Game with given id: " + gameCode + " doesn't exists!");
         }

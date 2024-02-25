@@ -3,36 +3,24 @@ package com.szachmaty.gamelogicservice.application.game;
 import com.github.bhlangonijr.chesslib.*;
 import com.github.bhlangonijr.chesslib.move.Move;
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
+import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class MoveProcessorImpl implements MoveProcessor {
 
-    private final GameDTOManager gameDTOManager;
-    private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private final static int MOVE_LEN = 4;
 
     @Override
-    public String doMove(String currMove, String gameCode) {
-        List<String> boards = gameDTOManager.getBoards(gameCode);
-        Side side;
-        String currBoardState;
-        if(boards != null) {
-            side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
-            currBoardState = boards.size() == 0 ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
-        } else { //first move
-            side = Side.WHITE;
-            currBoardState = INIT_CHESS_BOARD;
-        }
+    public String doMove(String currMove, String currBoardState, Side side) {
 
         Move move = prepareMove(currMove, side);
         Board board = new Board();
         board.loadFromFen(currBoardState);
+
         boolean isValid = board.doMove(move, true);
 
         if(isValid) {

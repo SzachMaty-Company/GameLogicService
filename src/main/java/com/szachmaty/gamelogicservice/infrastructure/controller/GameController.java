@@ -55,7 +55,7 @@ public class GameController {
 
     @SubscribeMapping("/subscribe")
     public String sendOneTimeMessage() {
-        return "Connected to the server"; //onready game
+        return "Connected to the server"; //onready game & start timestamp
     }
 
     @MessageMapping("/game/{gameCode}")
