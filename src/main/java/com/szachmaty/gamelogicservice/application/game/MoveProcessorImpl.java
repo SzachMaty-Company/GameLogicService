@@ -8,26 +8,37 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
+
 
 @Service
 public class MoveProcessorImpl implements MoveProcessor {
 
     private final static int MOVE_LEN = 4;
+    private final Board board;
+
+    public MoveProcessorImpl() {
+        board = new Board();
+    }
 
     @Override
-    public String doMove(String currMove, String currBoardState, Side side) {
+    public boolean doMove(String currMove, String currBoardState, Side side) {
 
         Move move = prepareMove(currMove, side);
-        Board board = new Board();
         board.loadFromFen(currBoardState);
 
         boolean isValid = board.doMove(move, true);
+        LinkedList<Long> l = board.getHistory();
+        System.out.println(l);
+        return isValid;
+    }
 
-        if(isValid) {
-            return board.getFen();
-        } else {
-            throw new InvalidMoveException("Move: " + currMove + " is invalid!");
-        }
+    public LinkedList<Long> getHistory() {
+        return board.getHistory();
+    }
+
+    public String getBoardState() {
+        return board.getFen();
     }
 
     private Move prepareMove(String currMove, Side side) {

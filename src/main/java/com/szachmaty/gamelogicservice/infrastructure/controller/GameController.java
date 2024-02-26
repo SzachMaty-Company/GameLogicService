@@ -10,11 +10,7 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.validations.Requ
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.validation.annotation.Validated;
@@ -58,20 +54,9 @@ public class GameController {
         return "Connected to the server"; //onready game & start timestamp
     }
 
-    @MessageMapping("/game/{gameCode}")
-    @SendTo("/game-queue/{gameCode}")
-    public String processChessMove(@PathVariable("gameCode") String gameCode, String move) {
-        gameProcessService.process(move, gameCode);
-        return move;
-    }
-
-    @MessageMapping("/game-handshake")
-    public void sendSpecific(
-            @Payload Message msg,
-            Principal user,
-            @Header("simpSessionId") String sessionId) throws Exception {
-        System.out.println(sessionId);
-        String boardState = gameProcessService.process(msg.getPayload().toString(),"08a6917c9864");
-//        simpMessagingTemplate.convertAndSendToUser( "/secured/user/queue/specific-user", out);
+    @MessageMapping("/game")
+    public String processChessMove(GameMessage message) {
+        gameProcessService.process(message.getMove(), message.getGameCode());
+        return message.getMove();
     }
 }

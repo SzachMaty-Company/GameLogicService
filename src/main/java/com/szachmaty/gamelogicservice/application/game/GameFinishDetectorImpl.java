@@ -7,6 +7,8 @@ import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
+
 @Service
 public class GameFinishDetectorImpl implements GameFinishDetector {
 
@@ -14,12 +16,17 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
     private final static int NO_WINNER = 0;
 
     @Override
-    public GameFinishDTO checkResultBasedOnBoard(String boardState, Side side) {
+    public GameFinishDTO checkResultBasedOnBoard(String boardState, Side side, LinkedList<Long> gameHistory) {
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;
         boolean isDraw;
 
         Board board = new Board();
+        if(gameHistory != null) {
+            for (var game : gameHistory) {
+                board.getHistory().add(game);
+            }
+        }
         board.loadFromFen(boardState);
         isDraw = board.isDraw();
         boolean isMate = board.isMated();
@@ -45,7 +52,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         Piece[] pieces = board.boardToArray();
 
         if(whiteTime != null && whiteTime < 0) {
-            int[] resultArray = whitePlayerInsufficientMaterialChecker(pieces);
+            int[] resultArray = blackPlayerInsufficientMaterialToWinChecker(pieces);
+            if(resultArray.length != 4) {
+                throw new RuntimeException(""); //TO BE CHANGED
+            }
             isBlackWinner = resultArray[0] == IS_WINNER;
             if(!isBlackWinner) {
                 isDraw = determineIsDraw(resultArray);
@@ -53,7 +63,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
             }
         }
         else if(blackTime != null && blackTime < 0) {
-            int[] resultArray = blackPlayerInsufficientMaterialChecker(pieces);
+            int[] resultArray = whitePlayerInsufficientMaterialToWinChecker(pieces);
+            if(resultArray.length != 4) {
+                throw new RuntimeException(""); //TO BE CHANGED
+            }
             isWhiteWinner = resultArray[0] == IS_WINNER;
             if(!isWhiteWinner) {
                 isDraw = determineIsDraw(resultArray);
@@ -69,27 +82,27 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         boolean isDraw = false;
         int bishopCounter = resultArray[1];
         int knightCounter = resultArray[2];
-        int blackPieceCounter = resultArray[3];
+        int oponentPieceCounter = resultArray[3];
         if(bishopCounter == 0 && knightCounter == 0) {
             isDraw = true;
         }
         if(bishopCounter == 1 || knightCounter == 1) {
             isDraw = true;
         }
-        if(knightCounter == 2 && blackPieceCounter == 0) {
+        if(knightCounter == 2 && oponentPieceCounter == 0) {
             isDraw = true;
         }
         return isDraw;
     }
 
-    private int[] whitePlayerInsufficientMaterialChecker(Piece[] pieces) {
-        boolean isBlackWinner = false;
+    private int[] whitePlayerInsufficientMaterialToWinChecker(Piece[] pieces) {
+        boolean isWhiteWinner = false;
         int bishopCounter = 0;
         int knightCounter = 0;
         int blackPieceCounter = 0;
         for(var p : pieces) {
             if(p.equals(Piece.WHITE_PAWN) || p.equals(Piece.WHITE_QUEEN) || p.equals(Piece.WHITE_ROOK)) {
-                isBlackWinner = true;
+                isWhiteWinner = true;
                 break;
             } else if(p.equals(Piece.WHITE_BISHOP)) {
                 bishopCounter++;
@@ -101,17 +114,17 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
                 blackPieceCounter++;
             }
         }
-        return new int[]{isBlackWinner ? IS_WINNER : NO_WINNER, bishopCounter, knightCounter, blackPieceCounter};
+        return new int[]{isWhiteWinner ? IS_WINNER : NO_WINNER, bishopCounter, knightCounter, blackPieceCounter};
     }
 
-    private int[] blackPlayerInsufficientMaterialChecker(Piece[] pieces) {
-        boolean isWhiteWinner = false;
+    private int[] blackPlayerInsufficientMaterialToWinChecker(Piece[] pieces) {
+        boolean isBlackWinner = false;
         int bishopCounter = 0;
         int knightCounter = 0;
         int whitePieceCounter = 0;
         for(var p : pieces) {
             if(p.equals(Piece.BLACK_PAWN) || p.equals(Piece.BLACK_QUEEN) || p.equals(Piece.BLACK_ROOK)) {
-                isWhiteWinner = true;
+                isBlackWinner = true;
                 break;
             } else if(p.equals(Piece.BLACK_BISHOP)) {
                 bishopCounter++;
@@ -123,6 +136,6 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
                 whitePieceCounter++;
             }
         }
-        return new int[]{isWhiteWinner ? IS_WINNER : NO_WINNER, bishopCounter, knightCounter, whitePieceCounter};
+        return new int[]{isBlackWinner ? IS_WINNER : NO_WINNER, bishopCounter, knightCounter, whitePieceCounter};
     }
 }

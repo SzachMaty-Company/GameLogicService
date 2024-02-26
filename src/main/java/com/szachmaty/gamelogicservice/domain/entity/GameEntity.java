@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.index.Indexed;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.GAME_HASH;
@@ -37,6 +38,7 @@ public class GameEntity implements Serializable {
     private Long prevMoveTime;
     private GameStatus gameStatus;
     private List<String> boardStateList;
+    private LinkedList<Long> gameHistory;
     private List<MoveEntity> moveList;
-
+    private String winner;
 }

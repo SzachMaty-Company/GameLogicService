@@ -1,9 +1,11 @@
 package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
+import com.szachmaty.gamelogicservice.application.repository.UserEntityRepository;
 import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
+import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
@@ -13,27 +15,24 @@ import com.szachmaty.gamelogicservice.application.repository.GameEntityRepositor
 import com.szachmaty.gamelogicservice.application.repository.exception.GameDTOEntityConversionException;
 import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityDTOConversionException;
 import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
 @Component
+@RequiredArgsConstructor
 public class EntityDTOConverter implements GameDTOManager {
 
     private final GameEntityDao gameEntityDao;
     private final GameEntityRepository gameEntityRepository;
+    private final UserEntityRepository userEntityRepository;
     private final Mapper mapperProvider;
-
-    @Autowired
-    public EntityDTOConverter(GameEntityDao gameEntityDao, GameEntityRepository gameEntityRepository, Mapper mapperProvider) {
-        this.gameEntityDao = gameEntityDao;
-        this.gameEntityRepository = gameEntityRepository;
-        this.mapperProvider = mapperProvider;
-    }
 
     @Override
     public GameWPlDTO getGameStateWPlById(long gameId) {
@@ -85,7 +84,6 @@ public class EntityDTOConverter implements GameDTOManager {
         }
         gameEntityDao.updateGame(gameEntity);
     }
-
     @Override
     public GameDTO getBoards(String gameCode) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
@@ -98,7 +96,12 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public GameDTO updateBoard(String move, String boardState, String gameCode, boolean isFinished) {
+    public UserDTO getUserById(String userId) {
+        return userEntityRepository.findById(userId);
+    }
+
+    @Override
+    public GameDTO updateBoard(String move, String boardState, String gameCode, LinkedList<Long> gameHistory, boolean isFinished) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
             List<MoveEntity> moveList = game.getMoveList();
@@ -120,6 +123,7 @@ public class EntityDTOConverter implements GameDTOManager {
                 boards.add(boardState);
                 game.setBoardStateList(boards);
             }
+            game.setGameHistory(gameHistory);
             if(isFinished) {
                 game.setGameStatus(GameStatus.FINISHED);
             }
@@ -143,6 +147,11 @@ public class EntityDTOConverter implements GameDTOManager {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
         System.out.println(gameEntity);
         gameEntityRepository.delete(gameEntity);
+    }
+
+    @Override
+    public boolean isPlayerGameParticipant(String gameCode, String userId) {
+        return true;
     }
 
 }

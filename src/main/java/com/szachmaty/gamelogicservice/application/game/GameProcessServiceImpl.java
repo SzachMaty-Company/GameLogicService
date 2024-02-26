@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -26,10 +27,10 @@ public class GameProcessServiceImpl implements GameProcessService {
     @Override
     public String process(String move, String gameCode) {
         GameDTO gameDTO = gameDTOManager.getBoards(gameCode);
-
         List<String> boards = gameDTO.getBoardStateList();
         Side side;
         String currBoardState;
+
         if(boards != null) {
             side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
             currBoardState = boards.size() == 0 ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
@@ -38,24 +39,33 @@ public class GameProcessServiceImpl implements GameProcessService {
             currBoardState = INIT_CHESS_BOARD;
         }
 
-        String afterMoveBoardState = moveValidator.doMove(move, currBoardState, side);
+        boolean isMoveValid = moveValidator.doMove(move, currBoardState, side);
+        String afterMoveBoardState;
+        LinkedList<Long> gameHistory;
+        if(isMoveValid) {
+            afterMoveBoardState = moveValidator.getBoardState();
+            gameHistory = moveValidator.getHistory();
+        } else {
+            throw new InvalidMoveException("Move: " + move + " is invalid!");
+        }
 
         if(afterMoveBoardState != null) {
             updateTime(gameDTO, side);
-            GameFinishDTO boardStateFinish = gameFinishDetector.checkResultBasedOnBoard(afterMoveBoardState, side);
+            GameFinishDTO boardStateFinish = gameFinishDetector
+                    .checkResultBasedOnBoard(afterMoveBoardState, side, gameHistory);
             GameFinishDTO timeFinish = gameFinishDetector.checkResultBasedOnTime(gameDTO, afterMoveBoardState);
 
             if(boardStateFinish != null && boardStateFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, true);
+                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, gameHistory, true);
                 notifyUserDataService(game);
                 return afterMoveBoardState;
             } else if(timeFinish != null && timeFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, true);
+                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode,gameHistory, true);
                 notifyUserDataService(game);
                 return afterMoveBoardState;
             }
 
-            gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, false);
+            gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, gameHistory, false);
             return afterMoveBoardState;
         } else {
             throw new InvalidMoveException("Move: " + move + " is invalid!");

@@ -6,6 +6,7 @@ import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -19,5 +20,6 @@ public class GameDTO {
     private Long prevMoveTime;
     private GameStatus gameStatus;
     private List<String> boardStateList;
+    private LinkedList<Long> gameHistory;
     private List<MoveEntity> moveList;
 }
