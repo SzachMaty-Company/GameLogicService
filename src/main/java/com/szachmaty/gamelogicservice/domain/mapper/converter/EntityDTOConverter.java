@@ -1,23 +1,15 @@
 package com.szachmaty.gamelogicservice.domain.mapper.converter;
 
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
-import com.szachmaty.gamelogicservice.application.repository.UserEntityRepository;
-import com.szachmaty.gamelogicservice.domain.dto.GameBPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
-import com.szachmaty.gamelogicservice.domain.dto.GameWPlDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
-import com.szachmaty.gamelogicservice.domain.entity.enumeration.GameStatus;
+import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.application.repository.GameEntityDao;
-import com.szachmaty.gamelogicservice.application.repository.GameEntityRepository;
-import com.szachmaty.gamelogicservice.application.repository.exception.GameDTOEntityConversionException;
-import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityDTOConversionException;
-import com.szachmaty.gamelogicservice.application.repository.exception.GameEntityNotFoundException;
+import com.szachmaty.gamelogicservice.domain.repository.GameEntityRepository;
+import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,61 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EntityDTOConverter implements GameDTOManager {
 
-    private final GameEntityDao gameEntityDao;
     private final GameEntityRepository gameEntityRepository;
-    private final UserEntityRepository userEntityRepository;
     private final Mapper mapperProvider;
 
-    @Override
-    public GameWPlDTO getGameStateWPlById(long gameId) {
-        GameEntity game = gameEntityDao.findGameById(gameId);
-        if(game == null) {
-            throw new GameEntityNotFoundException("Cannot find GameEntity with given id:" + gameId);
-        }
-        ModelMapper modelMapper = mapperProvider.gameEntityDTOMapper(GameWPlDTO.class);
-        GameWPlDTO gameWPlDTO = modelMapper.map(game, GameWPlDTO.class);
-        if(gameWPlDTO == null) {
-            throw new GameEntityDTOConversionException("Cannot convert: " + GameEntity.class + "to " + GameWPlDTO.class);
-        }
-        return gameWPlDTO;
-    }
-
-    @Override
-    public GameBPlDTO getGameStateBPlById(long gameId) {
-        GameEntity game = gameEntityDao.findGameById(gameId);
-        if(game == null) {
-            throw new GameEntityNotFoundException("Cannot find GameEntity with given id:" + gameId);
-        }
-        ModelMapper modelMapper = mapperProvider.gameEntityDTOMapper(GameBPlDTO.class);
-        GameBPlDTO gameBPlDTO = modelMapper.map(game, GameBPlDTO.class);
-        if(gameBPlDTO == null) {
-            throw new GameEntityDTOConversionException("Cannot convert: " +
-                    GameEntity.class + "to " + GameBPlDTO.class);
-        }
-        return gameBPlDTO;
-    }
-
-    @Override
-    public void saveGameStateWPl(GameWPlDTO gameWPlDTO) {
-         ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameWPlDTO.class);
-         GameEntity gameEntity = modelMapper.map(gameWPlDTO, GameEntity.class);
-         if(gameEntity == null) {
-             throw new GameDTOEntityConversionException("Cannot convert: " +
-                     GameWPlDTO.class + "to " + GameEntity.class);
-         }
-         gameEntityDao.updateGame(gameEntity);
-    }
-
-    @Override
-    public void saveGameStateBPl(GameBPlDTO gameBPlDTO) {
-        ModelMapper modelMapper = mapperProvider.gameDTOEntityMapper(GameBPlDTO.class);
-        GameEntity gameEntity = modelMapper.map(gameBPlDTO, GameEntity.class);
-        if(gameEntity == null) {
-            throw new GameDTOEntityConversionException("Cannot convert: " +
-                    GameBPlDTO.class + "to " + GameEntity.class);
-        }
-        gameEntityDao.updateGame(gameEntity);
-    }
     @Override
     public GameDTO getBoards(String gameCode) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
@@ -96,8 +36,14 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public UserDTO getUserById(String userId) {
-        return userEntityRepository.findById(userId);
+    public UserDTO getUserById(String uuid) {
+        GameEntity whiteGameEntity = gameEntityRepository.findByWhiteUserUuid(uuid);
+        if(whiteGameEntity == null) {
+            GameEntity blackGameEnttiy = gameEntityRepository.findByBlackUserUuid(uuid);
+//            return
+        }
+        return new UserDTO();
+//        return gameEntityRepository.findById(userId);
     }
 
     @Override
@@ -150,8 +96,10 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public boolean isPlayerGameParticipant(String gameCode, String userId) {
-        return true;
+    public boolean isPlayerGameParticipant(String gameCode, String user) {
+        GameEntity gameEntity = gameEntityRepository.findByGameCode(gameCode);
+        return gameEntity != null  && (user.equals(gameEntity.getWhiteUserId()) ||
+                        user.equals(gameEntity.getBlackUserId()));
     }
 
 }

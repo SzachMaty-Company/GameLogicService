@@ -1,16 +1,13 @@
 package com.szachmaty.gamelogicservice.domain.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class UserDTO {
-    private String username;
-    public UserDTO(String username) {
-        this.username = username;
-    }
-    public UserDTO() {}
+    private String whiteUserId;
+    private String blackUserId;
 }

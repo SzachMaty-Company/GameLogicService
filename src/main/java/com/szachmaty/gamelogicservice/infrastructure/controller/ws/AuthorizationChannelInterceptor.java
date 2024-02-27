@@ -2,7 +2,6 @@ package com.szachmaty.gamelogicservice.infrastructure.controller.ws;
 
 import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
