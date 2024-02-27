@@ -7,6 +7,7 @@ import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClient;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishDTO;
+import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,11 @@ public class GameProcessServiceImpl implements GameProcessService {
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     @Override
-    public String process(String move, String gameCode) {
+    @GameParticipantValidator
+    public String process(GameMessage message) {
+        String gameCode = message.getGameCode();
+        String move = message.getMove();
+
         GameDTO gameDTO = gameDTOManager.getBoards(gameCode);
         List<String> boards = gameDTO.getBoardStateList();
         Side side;
@@ -38,7 +43,7 @@ public class GameProcessServiceImpl implements GameProcessService {
             side = Side.WHITE;
             currBoardState = INIT_CHESS_BOARD;
         }
-
+        
         boolean isMoveValid = moveValidator.doMove(move, currBoardState, side);
         String afterMoveBoardState;
         LinkedList<Long> gameHistory;

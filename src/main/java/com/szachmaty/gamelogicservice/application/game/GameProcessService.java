@@ -1,7 +1,7 @@
 package com.szachmaty.gamelogicservice.application.game;
 
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameMoveInfoMessage;
+import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 
 public interface GameProcessService {
-    String process(String move, String gameCode);
+    String process(GameMessage message);
 }

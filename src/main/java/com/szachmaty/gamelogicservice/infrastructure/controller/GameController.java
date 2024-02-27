@@ -38,7 +38,7 @@ public class GameController {
     @PostMapping(path = "/move")
     @SuppressWarnings("rawtypes")
     public ResponseEntity doMove(@RequestBody GameMoveInfoMessage infoMessage) {
-        gameProcessService.process(infoMessage.move(), infoMessage.gameCode());
+//        gameProcessService.process(infoMessage.move(), infoMessage.gameCode());
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -48,8 +48,8 @@ public class GameController {
     }
 
     @MessageMapping("/game")
-    public String processChessMove(GameMessage message) {
-        gameProcessService.process(message.getMove(), message.getGameCode());
+    public String processChessMove(@RequestValidator GameMessage message) {
+        gameProcessService.process(message);
         return message.getMove();
     }
 }

@@ -5,7 +5,7 @@ import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 
 import java.util.LinkedList;
 
-public interface GameDTOManager {
+public interface GameDTOManager { //to change class name
     GameDTO getBoards(String gameCode);
     UserDTO getUserById(String userId);
     void saveNewGame(GameDTO gameDTO);
