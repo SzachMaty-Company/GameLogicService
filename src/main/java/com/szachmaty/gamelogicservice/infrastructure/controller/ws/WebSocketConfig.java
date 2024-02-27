@@ -17,11 +17,10 @@ import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthenticationChannelInterceptor authenticationInterceptor;
-    private final AuthorizationChannelInterceptor authorizationInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/game-handshake");
+        registry.addEndpoint("/game-handshake/{gameCode}");
     }
 
     @Override
@@ -34,8 +33,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureClientInboundChannel(ChannelRegistration channelRegistration) {
         channelRegistration.interceptors(
-                authenticationInterceptor,
-                authorizationInterceptor
+                authenticationInterceptor
         );
     }
 

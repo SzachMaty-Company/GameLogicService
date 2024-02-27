@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GameEntityRepository extends CrudRepository<GameEntity, String> {
     GameEntity findByGameCode(String gameCode);
-    GameEntity findByBlackUserUuid(String uuid);
-    GameEntity findByWhiteUserUuid(String uuid);
+    GameEntity findFirstByBlackUserId(String userId);
+    GameEntity findFirstByWhiteUserId(String userId);
 }

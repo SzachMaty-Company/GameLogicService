@@ -37,9 +37,9 @@ public class EntityDTOConverter implements GameDTOManager {
 
     @Override
     public UserDTO getUserById(String uuid) {
-        GameEntity whiteGameEntity = gameEntityRepository.findByWhiteUserUuid(uuid);
+        GameEntity whiteGameEntity = gameEntityRepository.findFirstByWhiteUserId(uuid);
         if(whiteGameEntity == null) {
-            GameEntity blackGameEnttiy = gameEntityRepository.findByBlackUserUuid(uuid);
+            GameEntity blackGameEnttiy = gameEntityRepository.findFirstByBlackUserId(uuid);
 //            return
         }
         return new UserDTO();
@@ -83,8 +83,6 @@ public class EntityDTOConverter implements GameDTOManager {
     @Override
     public void saveNewGame(GameDTO gameDTO) {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
-        gameEntity.setGameId("0");
-        System.out.println(gameEntity);
         gameEntityRepository.save(gameEntity);
     }
 
@@ -96,10 +94,10 @@ public class EntityDTOConverter implements GameDTOManager {
     }
 
     @Override
-    public boolean isPlayerGameParticipant(String gameCode, String user) {
+    public boolean isPlayerGameParticipant(String gameCode, String userId) {
         GameEntity gameEntity = gameEntityRepository.findByGameCode(gameCode);
-        return gameEntity != null  && (user.equals(gameEntity.getWhiteUserId()) ||
-                        user.equals(gameEntity.getBlackUserId()));
+        return gameEntity != null  && (userId.equals(gameEntity.getWhiteUserId()) ||
+                        userId.equals(gameEntity.getBlackUserId()));
     }
 
 }
