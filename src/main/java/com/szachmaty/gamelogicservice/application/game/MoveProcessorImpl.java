@@ -22,12 +22,16 @@ public class MoveProcessorImpl implements MoveProcessor {
     }
 
     @Override
-    public boolean doMove(String currMove, String currBoardState, Side side) {
+    public boolean doMove(GameProcessDTO gameProcessDTO) {
+        String currMove = gameProcessDTO.getMove();
+        Side side = gameProcessDTO.getSide();
+        String currBoardState = gameProcessDTO.getCurrBoardState();
 
         Move move = prepareMove(currMove, side);
         board.loadFromFen(currBoardState);
 
         boolean isValid = board.doMove(move, true);
+
         LinkedList<Long> l = board.getHistory();
         System.out.println(l);
         return isValid;

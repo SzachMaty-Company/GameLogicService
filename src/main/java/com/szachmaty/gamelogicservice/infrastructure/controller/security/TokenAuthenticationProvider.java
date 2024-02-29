@@ -22,17 +22,20 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 public class TokenAuthenticationProvider implements AuthenticationProvider {
 
-    private GameDTOManager gameDTOManager;
+    private final GameDTOManager gameDTOManager;
     private static final String USER_ID_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
-    @Value("{jwt.key}")
+    @Value("${jwt.key}")
     private String jwtKey;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         AuthenticationToken authenticationToken = (AuthenticationToken) authentication;
-        String token = (String) authenticationToken.getPrincipal();
-        String rawToken = token.substring(7);
+        String rawToken = (String) authenticationToken.getPrincipal();
+
+        if(rawToken.startsWith("Bearer ")) {
+            rawToken = rawToken.substring(7);
+        }
 
         String userId = null;
         boolean isTokenValid = false;
@@ -47,8 +50,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
         }
 
         boolean isUserValid = gameDTOManager
-                .isPlayerGameParticipant(userId,
-                (String) authenticationToken.getCredentials());
+                .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
         if(isUserValid && isTokenValid) {
             authenticationToken.setAuthenticated(true);
         }

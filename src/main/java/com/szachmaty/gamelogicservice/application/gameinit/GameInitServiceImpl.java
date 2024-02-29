@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,11 @@ public class GameInitServiceImpl implements GameInitService {
         }
     }
 
+    @Override
+    public List<GameDTO> getAllGames() {
+        return gameDTOManager.getAll();
+    }
+
     private GameInitResp createGameAIvsUser(GameInitReq initReq) {
         return null; //TO DO
     }
@@ -41,16 +47,17 @@ public class GameInitServiceImpl implements GameInitService {
 
         GameDTO gameDTO = GameDTO.builder()
                 .gameCode(gameCode)
-                .whiteUser(initReq.player1())
-                .blackUser(initReq.player2())
+                .whiteUserId(initReq.player1())
+                .blackUserId(initReq.player2()) //to be changed
                 .gameStatus(GameStatus.NOT_STARTED)
                 .blackTime(parsedTime)
                 .whiteTime(parsedTime)
+                .prevMoveTime(parsedTime*3)
                 .boardStateList(new ArrayList<>())
                 .moveList(new ArrayList<>())
                 .build();
 
-        gameDTOManager.saveNewGame(gameDTO);
+        gameDTOManager.saveNewGame(gameDTO); //to be moved
         GameCheckPlayerReq gameCheckPlayerReq = GameCheckPlayerReq.builder()
                 .oponent(initReq.player2())
                 .gameCode(gameCode)

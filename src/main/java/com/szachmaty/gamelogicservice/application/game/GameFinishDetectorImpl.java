@@ -16,7 +16,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
     private final static int NO_WINNER = 0;
 
     @Override
-    public GameFinishDTO checkResultBasedOnBoard(String boardState, Side side, LinkedList<Long> gameHistory) {
+    public GameFinishDTO checkResultBasedOnBoard(GameProcessDTO gameProcessDTO) {
+        LinkedList<Long> gameHistory = gameProcessDTO.getGameHistory();
+        String boardState = gameProcessDTO.getAfterMoveBoardState();
+        Side side = gameProcessDTO.getSide();
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;
         boolean isDraw;
@@ -40,9 +43,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw, isFinish);
     }
 
-    public GameFinishDTO checkResultBasedOnTime(GameDTO gameDTO, String boardState) {
-        Long whiteTime = gameDTO.getWhiteTime();
-        Long blackTime = gameDTO.getBlackTime();
+    public GameFinishDTO checkResultBasedOnTime(GameProcessDTO gameProcessDTO) {
+        String boardState = gameProcessDTO.getAfterMoveBoardState();
+        Long whiteTime = gameProcessDTO.getWhiteTime();
+        Long blackTime = gameProcessDTO.getBlackTime();
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;
         boolean isDraw = false;

@@ -28,56 +28,68 @@ public class GameProcessServiceImpl implements GameProcessService {
     @Override
     @GameParticipantValidator
     public String process(GameMessage message) {
-        String gameCode = message.getGameCode();
-        String move = message.getMove();
+        GameProcessDTO  gameProcessDTO = new GameProcessDTO();
+        gameProcessDTO.setGameCode(message.getGameCode());
+        gameProcessDTO.setMove(message.getMove());
 
-        GameDTO gameDTO = gameDTOManager.getBoards(gameCode);
+        GameDTO gameDTO = gameDTOManager.getBoards(gameProcessDTO.getGameCode());
         List<String> boards = gameDTO.getBoardStateList();
-        Side side;
-        String currBoardState;
 
         if(boards != null) {
-            side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
-            currBoardState = boards.size() == 0 ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
+            Side side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
+            String currBoardState = boards.size() == 0 ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
+            gameProcessDTO.setSide(side);
+            gameProcessDTO.setCurrBoardState(currBoardState);
         } else { //first move
-            side = Side.WHITE;
-            currBoardState = INIT_CHESS_BOARD;
+            gameProcessDTO.setFirstMove(true);
+            gameProcessDTO.setSide(Side.WHITE);
+            gameProcessDTO.setCurrBoardState(INIT_CHESS_BOARD);
         }
         
-        boolean isMoveValid = moveValidator.doMove(move, currBoardState, side);
-        String afterMoveBoardState;
-        LinkedList<Long> gameHistory;
+        boolean isMoveValid = moveValidator.doMove(gameProcessDTO);
+
         if(isMoveValid) {
-            afterMoveBoardState = moveValidator.getBoardState();
-            gameHistory = moveValidator.getHistory();
+            String afterMoveBoardState = moveValidator.getBoardState();
+            LinkedList<Long> gameHistory = moveValidator.getHistory();
+            gameProcessDTO.setAfterMoveBoardState(afterMoveBoardState);
+            gameProcessDTO.setGameHistory(gameHistory);
         } else {
-            throw new InvalidMoveException("Move: " + move + " is invalid!");
+            throw new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!");
         }
 
-        if(afterMoveBoardState != null) {
-            updateTime(gameDTO, side);
+        if(gameProcessDTO.getAfterMoveBoardState() != null) {
+            updateTime(gameDTO, gameProcessDTO);
             GameFinishDTO boardStateFinish = gameFinishDetector
-                    .checkResultBasedOnBoard(afterMoveBoardState, side, gameHistory);
-            GameFinishDTO timeFinish = gameFinishDetector.checkResultBasedOnTime(gameDTO, afterMoveBoardState);
+                    .checkResultBasedOnBoard(gameProcessDTO);
+            GameFinishDTO timeFinish = gameFinishDetector
+                    .checkResultBasedOnTime(gameProcessDTO);
 
             if(boardStateFinish != null && boardStateFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, gameHistory, true);
+                GameDTO game = gameDTOManager.updateBoard(gameProcessDTO);
                 notifyUserDataService(game);
-                return afterMoveBoardState;
+                return gameProcessDTO.getAfterMoveBoardState();
             } else if(timeFinish != null && timeFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode,gameHistory, true);
+                GameDTO game = gameDTOManager.updateBoard(gameProcessDTO);
                 notifyUserDataService(game);
-                return afterMoveBoardState;
+                return gameProcessDTO.getAfterMoveBoardState();
             }
 
-            gameDTOManager.updateBoard(move, afterMoveBoardState, gameCode, gameHistory, false);
-            return afterMoveBoardState;
+            gameDTOManager.updateBoard(gameProcessDTO);
+            return gameProcessDTO.getAfterMoveBoardState();
         } else {
-            throw new InvalidMoveException("Move: " + move + " is invalid!");
+            throw new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!");
         }
     }
 
-    private GameDTO updateTime(GameDTO gameDTO, Side side) {
+    private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {
+        if(gameProcessDTO.isFirstMove()) {
+           gameProcessDTO.setPrevMoveTime(gameDTO.getPrevMoveTime());
+           gameProcessDTO.setWhiteTime(gameDTO.getWhiteTime());
+           gameProcessDTO.setBlackTime(gameDTO.getBlackTime());
+           return;
+        }
+
+        Side side = gameProcessDTO.getSide();
         Long prevTime = gameDTO.getPrevMoveTime();
         Long playerGameTime = side == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -86,13 +98,11 @@ public class GameProcessServiceImpl implements GameProcessService {
         Long updatedGameTime = playerGameTime - diffBetweenTimeStamps;
 
         if(side == Side.WHITE) {
-            gameDTO.setWhiteTime(updatedGameTime);
+            gameProcessDTO.setWhiteTime(updatedGameTime);
         } else {
-            gameDTO.setBlackTime(updatedGameTime);
+            gameProcessDTO.setBlackTime(updatedGameTime);
         }
-        gameDTO.setPrevMoveTime(currTime);
-
-        return gameDTO;
+        gameProcessDTO.setPrevMoveTime(currTime);
     }
 
 

@@ -20,14 +20,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/game-handshake/{gameCode}");
+        registry.addEndpoint("/game-handshake").setAllowedOrigins("*");
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.setApplicationDestinationPrefixes(GAME_MESSAGE);
-        config.setUserDestinationPrefix("/secured/user");
-        config.enableSimpleBroker(GAME_BROKER);
+        config.setApplicationDestinationPrefixes("/game");
+//        config.setUserDestinationPrefix("/secured/user");
+        config.enableSimpleBroker("/queue");
     }
 
     @Override

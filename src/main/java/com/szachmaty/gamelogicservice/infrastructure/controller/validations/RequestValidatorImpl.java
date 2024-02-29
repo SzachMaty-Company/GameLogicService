@@ -15,7 +15,7 @@ public class RequestValidatorImpl implements ConstraintValidator<RequestValidato
     /**
      * Checks if format is valid (h:min:sec)
      */
-    private static final String GAME_TIME_REGEX = "^([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$";
+//    private static final String GAME_TIME_REGEX = "^([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$";
     private static final String EMPTY_STRING = "";
 
     @Override
@@ -39,7 +39,8 @@ public class RequestValidatorImpl implements ConstraintValidator<RequestValidato
 
     private boolean checkGameCreateRequest(GameInitReq input) {
         boolean isModeValid = StringUtils.containsAny(input.gameMode(), "FRIEND", "AI");
-        boolean isGameTimeValid = Pattern.matches(GAME_TIME_REGEX, input.gameTime());
+//        boolean isGameTimeValid = Pattern.matches(GAME_TIME_REGEX, input.gameTime());
+        boolean isGameTimeValid = true; //TO CHANGE
         boolean isPlayersValid =  !input.player1().isBlank() && !input.player2().isBlank();
         boolean isColorValid = StringUtils.containsAny(input.player1PieceColor(), "WHITE","BLACK");
         return isModeValid && isPlayersValid && isGameTimeValid && isColorValid;

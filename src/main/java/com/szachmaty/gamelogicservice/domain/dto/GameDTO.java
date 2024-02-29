@@ -3,18 +3,20 @@ package com.szachmaty.gamelogicservice.domain.dto;
 
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class GameDTO {
     private String gameCode;
-    private String whiteUser;
-    private String blackUser;
+    private String whiteUserId;
+    private String blackUserId;
     private Long whiteTime;
     private Long blackTime;
     private Long prevMoveTime;
