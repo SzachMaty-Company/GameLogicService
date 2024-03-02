@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface GameInitService {
     GameInitResp initGame(GameInitReq gCR);
-
     List<GameDTO> getAllGames();
 }

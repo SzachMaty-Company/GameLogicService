@@ -3,13 +3,10 @@ package com.szachmaty.gamelogicservice.infrastructure.controller.security;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
-import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
-import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
-import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
+import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.authenticator.SpnegoAuthenticator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -22,7 +19,7 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 public class TokenAuthenticationProvider implements AuthenticationProvider {
 
-    private final GameDTOManager gameDTOManager;
+    private final GameOperationService gameOperationService;
     private static final String USER_ID_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
     @Value("${jwt.key}")
@@ -49,7 +46,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
             throw new RuntimeException(e);
         }
 
-        boolean isUserValid = gameDTOManager
+        boolean isUserValid = gameOperationService
                 .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
         if(isUserValid && isTokenValid) {
             authenticationToken.setAuthenticated(true);

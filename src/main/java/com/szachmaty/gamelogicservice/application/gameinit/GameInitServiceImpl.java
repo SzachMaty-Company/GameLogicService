@@ -1,6 +1,6 @@
 package com.szachmaty.gamelogicservice.application.gameinit;
 
-import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
+import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class GameInitServiceImpl implements GameInitService {
 
-    private final GameDTOManager gameDTOManager;
+    private final GameOperationService gameOperationService;
     private final static String AI = "AI";
     private final static String FRIEND = "FRIEND";
 
@@ -33,7 +33,7 @@ public class GameInitServiceImpl implements GameInitService {
 
     @Override
     public List<GameDTO> getAllGames() {
-        return gameDTOManager.getAll();
+        return gameOperationService.getAll();
     }
 
     private GameInitResp createGameAIvsUser(GameInitReq initReq) {
@@ -57,7 +57,7 @@ public class GameInitServiceImpl implements GameInitService {
                 .moveList(new ArrayList<>())
                 .build();
 
-        gameDTOManager.saveNewGame(gameDTO); //to be moved
+        gameOperationService.saveNewGame(gameDTO); //to be moved
         GameCheckPlayerReq gameCheckPlayerReq = GameCheckPlayerReq.builder()
                 .oponent(initReq.player2())
                 .gameCode(gameCode)
@@ -67,14 +67,14 @@ public class GameInitServiceImpl implements GameInitService {
 //            res = gameClient.checkIfPlayerExists(gameCheckPlayerReq);
             res = new CheckPlayerResp(true); //MOCKED
         } catch(Exception e) {
-            gameDTOManager.deleteGame(gameDTO);
+            gameOperationService.deleteGame(gameDTO);
             throw e;
         }
 
         if(res != null && res.isPlayer2Exists()) {
             return new GameInitResp(gameCode);
         } else {
-            gameDTOManager.deleteGame(gameDTO);
+            gameOperationService.deleteGame(gameDTO);
             throw new GameInitException("Not exists!"); //TO BE CHANGED
         }
     }

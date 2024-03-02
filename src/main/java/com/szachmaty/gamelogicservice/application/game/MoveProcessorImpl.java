@@ -2,9 +2,6 @@ package com.szachmaty.gamelogicservice.application.game;
 
 import com.github.bhlangonijr.chesslib.*;
 import com.github.bhlangonijr.chesslib.move.Move;
-import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
-import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +27,10 @@ public class MoveProcessorImpl implements MoveProcessor {
         Move move = prepareMove(currMove, side);
         board.loadFromFen(currBoardState);
 
-        boolean isValid = board.doMove(move, true);
+        boolean isValid = false;
+        if(board.legalMoves().contains(move)) {
+            isValid = board.doMove(move, true);
+        }
 
         LinkedList<Long> l = board.getHistory();
         System.out.println(l);
@@ -48,7 +48,7 @@ public class MoveProcessorImpl implements MoveProcessor {
     private Move prepareMove(String currMove, Side side) {
         if(currMove.length() > MOVE_LEN) {
             String promotion = String.valueOf(currMove.charAt(4));
-            if(!StringUtils.containsAnyIgnoreCase(promotion, "Q", "R", "B", "K")) {
+            if(!StringUtils.containsAnyIgnoreCase(promotion, "Q", "R", "B", "N")) {
                 throw new InvalidMoveException("Invalid piece promotion!");
             }
         }

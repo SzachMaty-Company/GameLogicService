@@ -1,12 +1,11 @@
 package com.szachmaty.gamelogicservice.application.game;
 
-import com.github.bhlangonijr.chesslib.Board;
-import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
-import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
+import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClient;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishDTO;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,19 +19,19 @@ import java.util.List;
 public class GameProcessServiceImpl implements GameProcessService {
 
     private final MoveProcessor moveValidator;
-    private final GameDTOManager gameDTOManager;
+    private final GameOperationService gameOperationService;
     private final GameClient gameClient;
     private final GameFinishDetector gameFinishDetector;
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     @Override
     @GameParticipantValidator
-    public String process(GameMessage message) {
+    public MoveResponseDTO process(GameMessage message) {
         GameProcessDTO  gameProcessDTO = new GameProcessDTO();
         gameProcessDTO.setGameCode(message.getGameCode());
         gameProcessDTO.setMove(message.getMove());
 
-        GameDTO gameDTO = gameDTOManager.getBoards(gameProcessDTO.getGameCode());
+        GameDTO gameDTO = gameOperationService.getBoards(gameProcessDTO.getGameCode());
         List<String> boards = gameDTO.getBoardStateList();
 
         if(boards != null) {
@@ -64,29 +63,37 @@ public class GameProcessServiceImpl implements GameProcessService {
             GameFinishDTO timeFinish = gameFinishDetector
                     .checkResultBasedOnTime(gameProcessDTO);
 
-            if(boardStateFinish != null && boardStateFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(gameProcessDTO);
+            if((boardStateFinish != null && boardStateFinish.isFinish()) ||
+                    timeFinish != null && timeFinish.isFinish() ) {
+                GameDTO game = gameOperationService.updateBoard(gameProcessDTO);
                 notifyUserDataService(game);
-                return gameProcessDTO.getAfterMoveBoardState();
-            } else if(timeFinish != null && timeFinish.isFinish()) {
-                GameDTO game = gameDTOManager.updateBoard(gameProcessDTO);
-                notifyUserDataService(game);
-                return gameProcessDTO.getAfterMoveBoardState();
+                return gameProcessToMoveResponeConverter(gameProcessDTO);
             }
 
-            gameDTOManager.updateBoard(gameProcessDTO);
-            return gameProcessDTO.getAfterMoveBoardState();
+            gameOperationService.updateBoard(gameProcessDTO);
+            return gameProcessToMoveResponeConverter(gameProcessDTO);
         } else {
             throw new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!");
         }
     }
 
+    private MoveResponseDTO gameProcessToMoveResponeConverter(GameProcessDTO gameProcessDTO) {
+        Long time;
+        if(gameProcessDTO.getSide() == Side.WHITE) {
+            time = gameProcessDTO.getWhiteTime();
+        } else {
+            time = gameProcessDTO.getBlackTime();
+        }
+        return new MoveResponseDTO(gameProcessDTO.getMove(), gameProcessDTO.getAfterMoveBoardState(), time);
+    }
+
     private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {
         if(gameProcessDTO.isFirstMove()) {
-           gameProcessDTO.setPrevMoveTime(gameDTO.getPrevMoveTime());
-           gameProcessDTO.setWhiteTime(gameDTO.getWhiteTime());
-           gameProcessDTO.setBlackTime(gameDTO.getBlackTime());
-           return;
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            gameProcessDTO.setPrevMoveTime(timestamp.getTime());
+            gameProcessDTO.setWhiteTime(gameDTO.getWhiteTime());
+            gameProcessDTO.setBlackTime(gameDTO.getBlackTime());
+            return;
         }
 
         Side side = gameProcessDTO.getSide();
@@ -94,8 +101,9 @@ public class GameProcessServiceImpl implements GameProcessService {
         Long playerGameTime = side == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Long currTime = timestamp.getTime();
-        Long diffBetweenTimeStamps = currTime - prevTime;
-        Long updatedGameTime = playerGameTime - diffBetweenTimeStamps;
+        float diffBetweenTimeStampsInMiliSec = currTime - prevTime;
+        long diffBetweenTimeStampsInSec = Math.round(diffBetweenTimeStampsInMiliSec/1000);
+        Long updatedGameTime = playerGameTime - diffBetweenTimeStampsInSec;
 
         if(side == Side.WHITE) {
             gameProcessDTO.setWhiteTime(updatedGameTime);
@@ -107,7 +115,8 @@ public class GameProcessServiceImpl implements GameProcessService {
 
 
     private void notifyUserDataService(GameDTO game) {
-        gameClient.sendGameAfterFinish(game);
-        gameDTOManager.deleteGame(game);
+        System.out.println("Wyslaned do klienta " + game.toString());
+//        gameClient.sendGameAfterFinish(game);
+        gameOperationService.deleteGameByGameCode(game.getGameCode());
     }
 }

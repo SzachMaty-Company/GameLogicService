@@ -21,6 +21,6 @@ import static com.szachmaty.gamelogicservice.domain.entity.EntityConstants.MOVE_
 @Setter
 public class MoveEntity implements Serializable {
     @Id
-    private long moveId;
+    private String moveId;
     private String move;
 }

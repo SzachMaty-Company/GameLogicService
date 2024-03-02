@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.infrastructure.controller.data;
+package com.szachmaty.gamelogicservice.infrastructure.controller.apiclient;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

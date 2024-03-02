@@ -12,7 +12,6 @@ public final class GameInitUtil {
     private final static long MIN_IN_SEC = 60;
 
     /**
-     *
      * @return uuid
      */
     public static String generateGameCode() {

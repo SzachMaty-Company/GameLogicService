@@ -6,6 +6,7 @@ import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameMoveInfoMessage;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.validations.RequestValidator;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.Getter;
@@ -48,22 +49,10 @@ public class GameController {
         return new ResponseEntity<>(gameService.initGame(gCR), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/move")
-    @SuppressWarnings("rawtypes")
-    public ResponseEntity doMove(@RequestBody GameMoveInfoMessage infoMessage) {
-//        gameProcessService.process(infoMessage.move(), infoMessage.gameCode());
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @SubscribeMapping("/subscribe")
-    public String sendOneTimeMessage() {
-        return "Connected to the server"; //onready game & start timestamp
-    }
-
     @MessageMapping("/move")
     public void processChessMove(@RequestValidator GameMessage message) {
-        gameProcessService.process(message);
+        MoveResponseDTO moveResponseDTO = gameProcessService.process(message);
         String destination = "/queue/move/" + message.getGameCode();
-        simpMessagingTemplate.convertAndSend(destination, message.getMove());
+        simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
 }

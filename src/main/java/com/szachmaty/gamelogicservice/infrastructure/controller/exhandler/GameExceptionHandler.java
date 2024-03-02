@@ -1,6 +1,6 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.exhandler;
 
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameClientException;
+import com.szachmaty.gamelogicservice.infrastructure.controller.apiclient.GameClientException;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

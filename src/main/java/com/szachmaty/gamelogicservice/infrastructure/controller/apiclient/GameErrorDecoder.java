@@ -1,6 +1,5 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.apiclient;
 
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameClientException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.springframework.http.HttpStatus;

@@ -1,16 +1,14 @@
-package com.szachmaty.gamelogicservice.domain.mapper.converter;
+package com.szachmaty.gamelogicservice.domain.repository;
 
-import com.github.bhlangonijr.chesslib.game.Game;
+import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.application.game.GameProcessDTO;
-import com.szachmaty.gamelogicservice.application.manager.GameDTOManager;
+import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
 import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
-import com.szachmaty.gamelogicservice.domain.mapper.MapperProvider;
-import com.szachmaty.gamelogicservice.domain.repository.GameEntityRepository;
 import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +22,7 @@ import java.util.stream.StreamSupport;
 
 @Component
 @RequiredArgsConstructor
-public class EntityDTOConverter implements GameDTOManager {
+public class GameOperationServiceImpl implements GameOperationService {
 
     private final GameEntityRepository gameEntityRepository;
     private final Mapper mapperProvider;
@@ -65,6 +63,7 @@ public class EntityDTOConverter implements GameDTOManager {
         String gameCode = gameProcessDTO.getGameCode();
         String move = gameProcessDTO.getMove();
         String boardState = gameProcessDTO.getAfterMoveBoardState();
+        Side side = gameProcessDTO.getSide();
         LinkedList<Long> gameHistory = gameProcessDTO.getGameHistory();
         boolean isFinished = gameProcessDTO.isFinished();
         boolean isFirstMove = gameProcessDTO.isFirstMove();
@@ -78,7 +77,7 @@ public class EntityDTOConverter implements GameDTOManager {
                 moveList.add(moveEntity);
             } else {
                 List<MoveEntity> moves = new ArrayList<>();
-                MoveEntity moveEntity = new MoveEntity();
+                MoveEntity moveEntity = new MoveEntity(); //bug
                 moves.add(moveEntity);
                 game.setMoveList(moves);
             }
@@ -97,8 +96,12 @@ public class EntityDTOConverter implements GameDTOManager {
             if(isFinished) {
                 game.setGameStatus(GameStatus.FINISHED);
             }
-            game.setWhiteTime(gameProcessDTO.getWhiteTime());
-            game.setBlackTime(gameProcessDTO.getBlackTime());
+            if(side == Side.WHITE) {
+                game.setWhiteTime(gameProcessDTO.getWhiteTime());
+            }
+            else {
+                game.setBlackTime(gameProcessDTO.getBlackTime());
+            }
             game.setPrevMoveTime(gameProcessDTO.getPrevMoveTime());
             GameEntity gameEntity = gameEntityRepository.save(game);
             return mapperProvider.modelMapper().map(gameEntity, GameDTO.class);
@@ -118,6 +121,13 @@ public class EntityDTOConverter implements GameDTOManager {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
         System.out.println(gameEntity);
         gameEntityRepository.delete(gameEntity);
+    }
+
+    @Override
+    public void deleteGameByGameCode(String gameCode) {
+        if(gameCode != null && !gameCode.isEmpty()) {
+            gameEntityRepository.deleteByGameCode(gameCode);
+        }
     }
 
     @Override
