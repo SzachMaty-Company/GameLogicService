@@ -9,6 +9,7 @@ import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -43,14 +44,19 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 
             userId = jwt.getJWTClaimsSet().getStringClaim(USER_ID_CLAIM);
         } catch (ParseException | JOSEException e) {
-            throw new RuntimeException(e);
+            throw new BadCredentialsException("Cannot parse JWT token!");
         }
 
         boolean isUserValid = gameOperationService
                 .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
-        if(isUserValid && isTokenValid) {
-            authenticationToken.setAuthenticated(true);
+        if(!isTokenValid) {
+            throw new BadCredentialsException("Token is inalid!");
         }
+        if(!isUserValid) {
+            throw new BadCredentialsException("Inalid user credentials and/or invalid gameCode!");
+        }
+
+        authenticationToken.setAuthenticated(true);
         return authenticationToken;
     }
 

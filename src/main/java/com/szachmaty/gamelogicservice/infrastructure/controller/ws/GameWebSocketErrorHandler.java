@@ -7,6 +7,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.socket.messaging.StompSubProtocolErrorHandler;
 
 @Slf4j
@@ -18,7 +19,10 @@ public class GameWebSocketErrorHandler extends StompSubProtocolErrorHandler {
 
     @Override
     public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, Throwable ex) {
-        log.error(ex.getMessage());
+        log.error(ex.getCause().getMessage());
+        if(ex.getCause() instanceof BadCredentialsException) {
+            return super.handleClientMessageProcessingError(clientMessage, ex.getCause());
+        }
         if(ex instanceof InvalidMoveException) {
 //            return prepareErrorMessage(clientMessage, ex);
         }

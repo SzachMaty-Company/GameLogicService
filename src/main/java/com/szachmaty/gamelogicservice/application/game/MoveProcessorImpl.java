@@ -31,9 +31,7 @@ public class MoveProcessorImpl implements MoveProcessor {
         if(board.legalMoves().contains(move)) {
             isValid = board.doMove(move, true);
         }
-
         LinkedList<Long> l = board.getHistory();
-        System.out.println(l);
         return isValid;
     }
 
@@ -49,7 +47,7 @@ public class MoveProcessorImpl implements MoveProcessor {
         if(currMove.length() > MOVE_LEN) {
             String promotion = String.valueOf(currMove.charAt(4));
             if(!StringUtils.containsAnyIgnoreCase(promotion, "Q", "R", "B", "N")) {
-                throw new InvalidMoveException("Invalid piece promotion!");
+                throw new RuntimeException("Invalid piece promotion!");
             }
         }
         return new Move(currMove, side);

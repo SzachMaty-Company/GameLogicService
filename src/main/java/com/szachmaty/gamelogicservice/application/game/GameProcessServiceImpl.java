@@ -8,6 +8,7 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishD
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -44,16 +45,19 @@ public class GameProcessServiceImpl implements GameProcessService {
             gameProcessDTO.setSide(Side.WHITE);
             gameProcessDTO.setCurrBoardState(INIT_CHESS_BOARD);
         }
-        
-        boolean isMoveValid = moveValidator.doMove(gameProcessDTO);
 
-        if(isMoveValid) {
-            String afterMoveBoardState = moveValidator.getBoardState();
-            LinkedList<Long> gameHistory = moveValidator.getHistory();
-            gameProcessDTO.setAfterMoveBoardState(afterMoveBoardState);
-            gameProcessDTO.setGameHistory(gameHistory);
-        } else {
-            throw new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!");
+        try {
+            boolean isMoveValid = moveValidator.doMove(gameProcessDTO);
+            if(isMoveValid) {
+                String afterMoveBoardState = moveValidator.getBoardState();
+                LinkedList<Long> gameHistory = moveValidator.getHistory();
+                gameProcessDTO.setAfterMoveBoardState(afterMoveBoardState);
+                gameProcessDTO.setGameHistory(gameHistory);
+            } else {
+                throw buildInvalidMoveException(gameProcessDTO, gameDTO);
+            }
+        } catch(Exception e) {
+            throw buildInvalidMoveException(gameProcessDTO, gameDTO);
         }
 
         if(gameProcessDTO.getAfterMoveBoardState() != null) {
@@ -73,7 +77,7 @@ public class GameProcessServiceImpl implements GameProcessService {
             gameOperationService.updateBoard(gameProcessDTO);
             return gameProcessToMoveResponeConverter(gameProcessDTO);
         } else {
-            throw new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!");
+            throw buildInvalidMoveException(gameProcessDTO, gameDTO);
         }
     }
 
@@ -113,6 +117,14 @@ public class GameProcessServiceImpl implements GameProcessService {
         gameProcessDTO.setPrevMoveTime(currTime);
     }
 
+    private InvalidMoveException buildInvalidMoveException(GameProcessDTO gameProcessDTO, GameDTO gameDTO) {
+        return new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!",
+                gameProcessDTO.getMove(),
+                gameProcessDTO.getCurrBoardState(),
+                gameProcessDTO.getSide() == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime(),
+                gameProcessDTO.getGameCode()
+        );
+    }
 
     private void notifyUserDataService(GameDTO game) {
         System.out.println("Wyslaned do klienta " + game.toString());

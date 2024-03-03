@@ -1,6 +1,8 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller.data;
 
-public class TokenException extends RuntimeException {
+import org.springframework.security.authentication.BadCredentialsException;
+
+public class TokenException extends BadCredentialsException {
     public TokenException(String message) {
         super(message);
     }

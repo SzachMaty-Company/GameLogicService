@@ -40,10 +40,10 @@ public class AuthenticationChannelInterceptor implements ChannelInterceptor {
             throw new TokenException("Missing game code!");
         }
         if(token.size() != 1) {
-            throw new TokenException("One token is required!");
+            throw new TokenException("Only one token is required!");
         }
         if(gameCode.size() != 1) {
-            throw new TokenException("One gameCode is required!");
+            throw new TokenException("Only one gameCode is required!");
         }
 
         Authentication authentication = new AuthenticationToken(token.get(0), gameCode.get(0));
