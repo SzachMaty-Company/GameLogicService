@@ -1,0 +1,11 @@
+server:
+  port: 8080
+external:
+  service:
+    user-service:
+      url: "https://api.publicapis.org"
+
+
+
+jwt:
+  key: 0u8feufbeufbefdwgbytactrvanipol]

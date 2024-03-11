@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConstants.MOVE_HASH;
+import static com.szachmaty.gamelogicservice.domain.entity.EntityConstants.MOVE_HASH;
 
 
 @RedisHash(MOVE_HASH)
@@ -21,6 +21,6 @@ import static com.szachmaty.gamelogicservice.domain.entity.constants.EntityConst
 @Setter
 public class MoveEntity implements Serializable {
     @Id
-    private long moveId;
+    private String moveId;
     private String move;
 }
