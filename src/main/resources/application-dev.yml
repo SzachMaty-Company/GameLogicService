@@ -4,7 +4,8 @@ external:
   service:
     user-service:
       url: "https://api.publicapis.org"
-#      xD
+
+
 
 jwt:
   key: 0u8feufbeufbefdwgbytactrvanipol]

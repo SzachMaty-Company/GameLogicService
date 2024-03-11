@@ -44,17 +44,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('bootBuildImage') {
-    builder = 'paketobuildpacks/builder-jammy-base:latest'
-}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-task copyJarToLib(type : Copy) {
-    from "build/libs/GameLogicService-0.0.1-SNAPSHOT.jar"
-    into "lib/"
+bootJar {
+    destinationDirectory = file('lib')
+    archiveFileName = "GameLogicService.jar"
 }
 
-build.finalizedBy(copyJarToLib)

@@ -4,13 +4,21 @@ services:
   redis:
     container_name: redis
     image: redis:latest
+    command: redis-server --requirepass redis-password
     ports:
-      - 6379:6379
+      - "6379"
+
   game-logic:
     container_name: game-logic
-    depends_on:
-      - redis
+    environment:
+      - REDIS_HOST_NAME=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis-password
+      - JWT_KEY=0u8feufbeufbefdwgbytactrvanipol]
+      - USER_SERVICE_URL=http://user-service:8000 #to be changed
     build:
       dockerfile: Dockerfile
+    depends_on:
+      - redis
     ports:
       - "8080:8080"
