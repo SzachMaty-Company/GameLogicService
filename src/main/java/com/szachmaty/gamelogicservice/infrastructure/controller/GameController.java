@@ -24,6 +24,7 @@ import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @Validated
 public class GameController {
 

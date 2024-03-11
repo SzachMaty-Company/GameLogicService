@@ -9,7 +9,7 @@ services:
       - "6379"
 
   game-logic:
-    container_name: game-logic
+    container_name: game-logic-service
     environment:
       - REDIS_HOST_NAME=redis
       - REDIS_PORT=6379
@@ -21,4 +21,4 @@ services:
     depends_on:
       - redis
     ports:
-      - "8080:8080"
+      - "8125:8080"

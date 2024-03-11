@@ -48,17 +48,6 @@ public class GameOperationServiceImpl implements GameOperationService {
     }
 
     @Override
-    public UserDTO getUserById(String uuid) {
-        GameEntity whiteGameEntity = gameEntityRepository.findFirstByWhiteUserId(uuid);
-        if(whiteGameEntity == null) {
-            GameEntity blackGameEnttiy = gameEntityRepository.findFirstByBlackUserId(uuid);
-//            return
-        }
-        return new UserDTO();
-//        return gameEntityRepository.findById(userId);
-    }
-
-    @Override
     public GameDTO updateBoard(GameProcessDTO gameProcessDTO) {
         String gameCode = gameProcessDTO.getGameCode();
         String move = gameProcessDTO.getMove();
@@ -114,13 +103,6 @@ public class GameOperationServiceImpl implements GameOperationService {
     public void saveNewGame(GameDTO gameDTO) {
         GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
         gameEntityRepository.save(gameEntity);
-    }
-
-    @Override
-    public void deleteGame(GameDTO gameDTO) {
-        GameEntity gameEntity = mapperProvider.modelMapper().map(gameDTO, GameEntity.class);
-        System.out.println(gameEntity);
-        gameEntityRepository.delete(gameEntity);
     }
 
     @Override
