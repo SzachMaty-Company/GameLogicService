@@ -23,9 +23,6 @@ public class GameWebSocketErrorHandler extends StompSubProtocolErrorHandler {
         if(ex.getCause() instanceof BadCredentialsException) {
             return super.handleClientMessageProcessingError(clientMessage, ex.getCause());
         }
-        if(ex instanceof InvalidMoveException) {
-//            return prepareErrorMessage(clientMessage, ex);
-        }
         return super.handleClientMessageProcessingError(clientMessage, ex);
     }
 

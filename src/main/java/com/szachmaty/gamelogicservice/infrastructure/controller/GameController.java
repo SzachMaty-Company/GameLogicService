@@ -4,22 +4,17 @@ import com.szachmaty.gamelogicservice.application.game.GameProcessService;
 import com.szachmaty.gamelogicservice.application.game.InvalidMoveException;
 import com.szachmaty.gamelogicservice.application.gameinit.GameInitService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameMoveInfoMessage;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
-import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitResp;
+import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitRes;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.validations.RequestValidator;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +38,7 @@ public class GameController {
     }
 
     @PostMapping(path = GAME_INIT)
-    public ResponseEntity<GameInitResp> createGame(
+    public ResponseEntity<GameInitRes> createGame(
             @RequestBody
             @RequestValidator
             GameInitReq gCR
