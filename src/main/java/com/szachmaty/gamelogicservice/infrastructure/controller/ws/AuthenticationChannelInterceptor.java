@@ -11,6 +11,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -48,6 +51,8 @@ public class AuthenticationChannelInterceptor implements ChannelInterceptor {
 
         Authentication authentication = new AuthenticationToken(token.get(0), gameCode.get(0));
         authenticationManager.authenticate(authentication);
+        stompHeaderAccessor.setUser(authentication);
+
         return message;
     }
 }

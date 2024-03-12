@@ -15,9 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import static com.szachmaty.gamelogicservice.infrastructure.controller.constant.APIRoutes.GAME_INIT;
@@ -48,8 +51,9 @@ public class GameController {
     }
 
     @MessageMapping("/move")
-    public void processChessMove(@RequestValidator GameMessage message) {
-        MoveResponseDTO moveResponseDTO = gameProcessService.process(message);
+    public void processChessMove(@RequestValidator GameMessage message, @AuthenticationPrincipal Principal principal) {
+        System.out.println(principal);
+        MoveResponseDTO moveResponseDTO = gameProcessService.process(message, principal);
         String destination = "/queue/move/" + message.getGameCode();
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }

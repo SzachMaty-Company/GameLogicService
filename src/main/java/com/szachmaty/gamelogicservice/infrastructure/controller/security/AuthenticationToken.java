@@ -32,9 +32,14 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
         return credentials;
     }
 
+    public void setPrincipal(Object principal) {
+        this.principal = principal;
+    }
+
     @Override
     public Object getPrincipal() {
         return principal;
     }
+
 
 }

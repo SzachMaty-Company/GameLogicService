@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.application.manager;
 
+import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.application.game.GameProcessDTO;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
@@ -13,4 +14,5 @@ public interface GameOperationService {
     void deleteGameByGameCode(String gameCode);
     boolean isPlayerGameParticipant(String gameCode, String userId);
     List<GameDTO> getAll();
+    Side getSideToMove(String gameCode);
 }

@@ -4,9 +4,7 @@ import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.application.game.GameProcessDTO;
 import com.szachmaty.gamelogicservice.application.manager.GameOperationService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
-import com.szachmaty.gamelogicservice.domain.dto.UserDTO;
 import com.szachmaty.gamelogicservice.domain.entity.GameEntity;
-import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import com.szachmaty.gamelogicservice.domain.mapper.Mapper;
 import com.szachmaty.gamelogicservice.domain.repository.exception.GameEntityNotFoundException;
@@ -31,9 +29,24 @@ public class GameOperationServiceImpl implements GameOperationService {
     public List<GameDTO> getAll() {
         Iterable<GameEntity> games = gameEntityRepository.findAll();
         List<GameEntity> gameEntities = StreamSupport.stream(games.spliterator(), false).toList();
+        if(gameEntities.isEmpty()) {
+            return null;
+        }
         return gameEntities.stream()
                 .map(game -> mapperProvider.modelMapper().map(game, GameDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Side getSideToMove(String gameCode) {
+        GameEntity game = gameEntityRepository.findByGameCode(gameCode);
+        if(game == null) {
+            return null;
+        }
+        if(game.getMoveList() == null) {
+            return Side.WHITE;
+        }
+        return game.getMoveList().size() % 2 == 0 ? Side.WHITE : Side.BLACK;
     }
 
     @Override
@@ -59,15 +72,13 @@ public class GameOperationServiceImpl implements GameOperationService {
 
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
-            List<MoveEntity> moveList = game.getMoveList();
+            List<String> moveList = game.getMoveList();
             if(moveList != null) {
-                MoveEntity moveEntity = new MoveEntity();
-                moveEntity.setMove(move);
-                moveList.add(moveEntity);
+                moveList.add(move);
+                game.setMoveList(moveList);
             } else {
-                List<MoveEntity> moves = new ArrayList<>();
-                MoveEntity moveEntity = new MoveEntity(); //bug
-                moves.add(moveEntity);
+                List<String> moves = new ArrayList<>();
+                moves.add(move);
                 game.setMoveList(moves);
             }
             List<String> boardStates = game.getBoardStateList();

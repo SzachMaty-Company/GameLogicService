@@ -50,12 +50,12 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
         boolean isUserValid = gameOperationService
                 .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
         if(!isTokenValid) {
-            throw new BadCredentialsException("Token is inalid!");
+            throw new BadCredentialsException("Token is invalid!");
         }
         if(!isUserValid) {
             throw new BadCredentialsException("Inalid user credentials and/or invalid gameCode!");
         }
-
+        authenticationToken.setPrincipal(userId);
         authenticationToken.setAuthenticated(true);
         return authenticationToken;
     }

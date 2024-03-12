@@ -1,7 +1,6 @@
 package com.szachmaty.gamelogicservice.domain.dto;
 
 
-import com.szachmaty.gamelogicservice.domain.entity.MoveEntity;
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import lombok.*;
 
@@ -23,5 +22,5 @@ public class GameDTO {
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private LinkedList<Long> gameHistory;
-    private List<MoveEntity> moveList;
+    private List<String> moveList;
 }

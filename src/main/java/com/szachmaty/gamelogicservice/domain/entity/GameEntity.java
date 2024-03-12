@@ -38,6 +38,6 @@ public class GameEntity implements Serializable {
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private LinkedList<Long> gameHistory;
-    private List<MoveEntity> moveList;
+    private List<String> moveList;
     private String winner;
 }

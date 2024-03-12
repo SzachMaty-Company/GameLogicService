@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     @Override
     @GameParticipantValidator
-    public MoveResponseDTO process(GameMessage message) {
+    public MoveResponseDTO process(GameMessage message, Principal principal) {
         GameProcessDTO  gameProcessDTO = new GameProcessDTO();
         gameProcessDTO.setGameCode(message.getGameCode());
         gameProcessDTO.setMove(message.getMove());
