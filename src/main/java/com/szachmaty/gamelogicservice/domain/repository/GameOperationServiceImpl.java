@@ -38,15 +38,28 @@ public class GameOperationServiceImpl implements GameOperationService {
     }
 
     @Override
-    public Side getSideToMove(String gameCode) {
-        GameEntity game = gameEntityRepository.findByGameCode(gameCode);
-        if(game == null) {
-            return null;
+    public boolean validatePlayerTurn(String gameCode, String principal) {
+        GameEntity gameEntity = gameEntityRepository.findByGameCode(gameCode);
+        if(gameEntity == null) {
+            return false;
         }
-        if(game.getMoveList() == null) {
-            return Side.WHITE;
+        boolean isWhiteUser = principal.equals(gameEntity.getWhiteUserId());
+        Side side;
+        if(gameEntity.getMoveList() == null) {
+            return isWhiteUser; //case when its first move
         }
-        return game.getMoveList().size() % 2 == 0 ? Side.WHITE : Side.BLACK;
+
+        if(gameEntity.getMoveList().size() % 2 == 0) {
+            side = Side.WHITE;
+        } else {
+            side = Side.BLACK;
+        }
+
+        if(isWhiteUser && side.equals(Side.WHITE)) {
+            return true;
+        } else {
+            return !isWhiteUser && side.equals(Side.BLACK);
+        }
     }
 
     @Override

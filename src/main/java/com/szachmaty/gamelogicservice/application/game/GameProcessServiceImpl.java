@@ -8,10 +8,8 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishD
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +26,7 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     @Override
     @GameParticipantValidator
-    public MoveResponseDTO process(GameMessage message, Principal principal) {
+    public MoveResponseDTO process(GameMessage message) {
         GameProcessDTO  gameProcessDTO = new GameProcessDTO();
         gameProcessDTO.setGameCode(message.getGameCode());
         gameProcessDTO.setMove(message.getMove());
