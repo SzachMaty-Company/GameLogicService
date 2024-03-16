@@ -1,9 +1,6 @@
 package com.szachmaty.gamelogicservice.application.gameinit;
 
 
-import com.github.bhlangonijr.chesslib.game.Game;
-
-import java.time.LocalTime;
 import java.util.UUID;
 
 public final class GameInitUtil {
@@ -23,18 +20,7 @@ public final class GameInitUtil {
      * @param gameTime
      * @return LocalTime in format h:min:sec or min:sec
      */
-    public static Long gameTimeParser(String gameTime) {
-        String[] parts = gameTime.split(":");
-        if(parts.length < 3) {
-            throw new GameInitException("Invalid gameTime format! Given: " + gameTime + " Expected: h:min:sec");
-        }
-        try {
-            long hours = Long.parseLong(parts[0]);
-            long minutes = Long.parseLong(parts[1]);
-            long seconds = Long.parseLong(parts[2]);
-            return hours*HOUR_IN_SEC + minutes*MIN_IN_SEC + seconds;
-        } catch (NumberFormatException e) {
-            throw new GameInitException(e.getMessage());
-        }
+    public static Long gameTimeParser(Integer gameTime) {
+        return Long.valueOf(gameTime*60);
     }
 }

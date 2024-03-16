@@ -45,6 +45,7 @@ public class GameParticipantValidatorAspect {
                 boolean isValid = gameOperationService
                         .isPlayerGameParticipant(gameMessage.getGameCode(), principal);
                 if(!isValid) {
+                    log.error("Player is not this game participant!");
                     throw new BadCredentialsException("Bad credentials!");
                 }
 

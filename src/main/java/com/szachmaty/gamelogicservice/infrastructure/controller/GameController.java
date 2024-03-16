@@ -67,5 +67,18 @@ public class GameController {
             String destination = "/queue/move/" + gameCode;
             simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
         }
+
+        //resolve this issue
+//        else if(e instanceof BadCredentialsException badCredentialsException) {
+//            MoveResponseDTO moveResponseDTO = new MoveResponseDTO(
+//                    null,
+//                    null,
+//                    null,
+//
+//            )
+//        }
+//        else if(e instanceof Exception e) {
+//            String
+//        }
     }
 }

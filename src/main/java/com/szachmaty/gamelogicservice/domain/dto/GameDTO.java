@@ -1,6 +1,5 @@
 package com.szachmaty.gamelogicservice.domain.dto;
 
-
 import com.szachmaty.gamelogicservice.domain.entity.GameStatus;
 import lombok.*;
 

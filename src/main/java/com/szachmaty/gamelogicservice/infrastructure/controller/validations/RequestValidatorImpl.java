@@ -7,8 +7,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.regex.Pattern;
-
 @Component
 public class RequestValidatorImpl implements ConstraintValidator<RequestValidator, Object> {
 
@@ -38,9 +36,11 @@ public class RequestValidatorImpl implements ConstraintValidator<RequestValidato
     }
 
     private boolean checkGameCreateRequest(GameInitReq input) {
+        if(input == null) {
+            return false;
+        }
         boolean isModeValid = StringUtils.containsAny(input.gameMode(), "FRIEND", "AI");
-//        boolean isGameTimeValid = Pattern.matches(GAME_TIME_REGEX, input.gameTime());
-        boolean isGameTimeValid = true; //TO CHANGE
+        boolean isGameTimeValid = input.gameTime() != null && input.gameTime() > 0;
         boolean isPlayersValid =  !input.player1().isBlank() && !input.player2().isBlank();
         boolean isColorValid = StringUtils.containsAny(input.player1PieceColor(), "WHITE","BLACK");
         return isModeValid && isPlayersValid && isGameTimeValid && isColorValid;

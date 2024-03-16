@@ -7,7 +7,8 @@
     <script defer>
         let client = null;
         let subscription = null;
-        const gameCode = "86edb4fb5701";
+        const gameCode = "c285ededf73f";
+        const port = 8000;
         let messages = [];
         // hardcoded for tests
         let users = {
@@ -40,7 +41,7 @@
 
         async function connect(user) {
             client = new StompJs.Client({
-                brokerURL: "ws://localhost:8080/game-handshake",
+                brokerURL: `ws://localhost:${port}/game-handshake`,
                 debug: debugCallback,
                 connectHeaders: {
                     token: users[user],
@@ -72,7 +73,6 @@
             client.publish({
                 destination: "/game/move",
                 body: JSON.stringify({
-                    userId: "user1",
                     gameCode: gameCode,
                     move: move.value
                 }),
