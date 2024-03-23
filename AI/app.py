@@ -26,6 +26,7 @@ settings.only_square = False
 
 @app.route("/", methods=['POST'])
 def hello():
+    return "", 200
     data = request.get_json()
     fen = data.get('fen')
 
@@ -41,7 +42,7 @@ def hello():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8888)
 
 
 # bb = ChessBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")

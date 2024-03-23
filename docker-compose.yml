@@ -22,3 +22,11 @@ services:
       - redis
     ports:
       - "8125:8080"
+
+  python-container:
+    container_name: minimal-python
+    build:
+      context: ./AI
+      dockerfile: Dockerfile.python
+    expose:
+      - "8888"
