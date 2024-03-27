@@ -1,7 +1,6 @@
 package com.szachmaty.gamelogicservice.infrastructure.controller;
 
 import com.szachmaty.gamelogicservice.application.game.GameProcessService;
-import com.szachmaty.gamelogicservice.application.game.InvalidMoveException;
 import com.szachmaty.gamelogicservice.application.gameinit.GameInitService;
 import com.szachmaty.gamelogicservice.domain.dto.GameDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameInitReq;
@@ -12,10 +11,8 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,20 +52,5 @@ public class GameController {
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
 
-    @MessageExceptionHandler
-    public void handeExceptions(Exception e) {
-        if(e instanceof InvalidMoveException moveException) {
-            MoveResponseDTO moveResponseDTO = new MoveResponseDTO(
-                    moveException.getMove(),
-                    moveException.getBoard(),
-                    moveException.getTime(),
-                    moveException.getMessage()
-            );
-            String gameCode = moveException.getGameCode();
-            String destination = "/queue/move/" + gameCode;
-            simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
-        } else if(e instanceof BadCredentialsException badCredentialsException) {
-//            MoveResponseDTO moveResponseDTO = new MoveResponseDTO();
-        }
-    }
+
 }

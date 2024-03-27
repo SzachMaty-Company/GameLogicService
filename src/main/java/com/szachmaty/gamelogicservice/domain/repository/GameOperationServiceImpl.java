@@ -65,12 +65,10 @@ public class GameOperationServiceImpl implements GameOperationService {
     @Override
     public GameDTO getBoards(String gameCode) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
-        GameDTO gameDTO = mapperProvider.modelMapper().map(game, GameDTO.class);
-        if(gameDTO != null) {
-            return gameDTO;
-        } else {
-            throw new GameEntityNotFoundException("Game with given id: " + gameCode + " doesn't exists!");
+        if(game == null) {
+            return null;
         }
+        return mapperProvider.modelMapper().map(game, GameDTO.class);
     }
 
     @Override
