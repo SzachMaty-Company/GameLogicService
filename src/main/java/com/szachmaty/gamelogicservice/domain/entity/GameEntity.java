@@ -40,4 +40,5 @@ public class GameEntity implements Serializable {
     private LinkedList<Long> gameHistory;
     private List<String> moveList;
     private String winner;
+    private boolean isGameWithAI;
 }

@@ -22,4 +22,5 @@ public class GameDTO {
     private List<String> boardStateList;
     private LinkedList<Long> gameHistory;
     private List<String> moveList;
+    private boolean isGameWithAI;
 }

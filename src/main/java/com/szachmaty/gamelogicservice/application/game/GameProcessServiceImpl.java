@@ -8,6 +8,7 @@ import com.szachmaty.gamelogicservice.infrastructure.controller.data.GameFinishD
 import com.szachmaty.gamelogicservice.infrastructure.controller.data.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.infrastructure.controller.ws.GameMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -22,7 +23,23 @@ public class GameProcessServiceImpl implements GameProcessService {
     private final GameOperationService gameOperationService;
     private final GameClient gameClient;
     private final GameFinishDetector gameFinishDetector;
+    private ApplicationEventPublisher applicationEventPublisher;
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    public MoveResponseDTO processOuter(GameMessage message) {
+        GameDTO gameDTO = gameOperationService.getBoards(message.getGameCode());
+        if(gameDTO == null) {
+            throw new RuntimeException("error!"); //to change
+        }
+        if(gameDTO.isGameWithAI()) {
+            MoveResponseDTO responseDTO = process(message);
+            GameAIMessageEventData eventData =
+                    new GameAIMessageEventData(this, message.getGameCode(), responseDTO.fen());
+            applicationEventPublisher.publishEvent(eventData); //async
+            return responseDTO;
+        }
+        return process(message);
+    }
 
     @Override
     @GameParticipantValidator
@@ -32,6 +49,10 @@ public class GameProcessServiceImpl implements GameProcessService {
         gameProcessDTO.setMove(message.getMove());
 
         GameDTO gameDTO = gameOperationService.getBoards(gameProcessDTO.getGameCode());
+        if(gameDTO == null) {
+            throw new RuntimeException("error!"); //to change
+        }
+
         List<String> boards = gameDTO.getBoardStateList();
 
         if(boards != null) {

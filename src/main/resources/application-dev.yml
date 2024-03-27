@@ -4,6 +4,8 @@ external:
   service:
     user-service:
       url: "https://api.publicapis.org"
+    ai-service:
+      url: ai-service
 
 spring:
   data:
