@@ -82,12 +82,16 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     private MoveResponseDTO gameProcessToMoveResponeConverter(GameProcessDTO gameProcessDTO) {
         Long time;
+        Side nextMove;
         if(gameProcessDTO.getSide() == Side.WHITE) {
             time = gameProcessDTO.getWhiteTime();
+            nextMove = Side.BLACK;
         } else {
             time = gameProcessDTO.getBlackTime();
+            nextMove = Side.WHITE;
         }
-        return new MoveResponseDTO(gameProcessDTO.getMove(), gameProcessDTO.getAfterMoveBoardState(), time);
+        return new MoveResponseDTO(gameProcessDTO.getMove(),
+                gameProcessDTO.getAfterMoveBoardState(), time, nextMove.toString());
     }
 
     private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {

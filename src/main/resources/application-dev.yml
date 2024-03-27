@@ -5,7 +5,11 @@ external:
     user-service:
       url: "https://api.publicapis.org"
 
-
+spring:
+  data:
+    redis:
+      port: 6379
+      host: redis
 
 jwt:
   key: 0u8feufbeufbefdwgbytactrvanipol]

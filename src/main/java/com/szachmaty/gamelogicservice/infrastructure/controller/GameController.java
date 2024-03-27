@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,19 +67,8 @@ public class GameController {
             String gameCode = moveException.getGameCode();
             String destination = "/queue/move/" + gameCode;
             simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
+        } else if(e instanceof BadCredentialsException badCredentialsException) {
+//            MoveResponseDTO moveResponseDTO = new MoveResponseDTO();
         }
-
-        //resolve this issue
-//        else if(e instanceof BadCredentialsException badCredentialsException) {
-//            MoveResponseDTO moveResponseDTO = new MoveResponseDTO(
-//                    null,
-//                    null,
-//                    null,
-//
-//            )
-//        }
-//        else if(e instanceof Exception e) {
-//            String
-//        }
     }
 }
