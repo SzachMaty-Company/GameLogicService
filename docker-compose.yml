@@ -5,8 +5,8 @@ services:
     container_name: redis
     image: redis:latest
     command: redis-server --requirepass redis-password
-    ports:
-      - "6379"
+    expose:
+      - 6379
 
   game-logic:
     container_name: game-logic-service
@@ -16,6 +16,7 @@ services:
       - REDIS_PASSWORD=redis-password
       - JWT_KEY=0u8feufbeufbefdwgbytactrvanipol]
       - USER_SERVICE_URL=http://user-service:8000 #to be changed
+      - AI_SERVICE_URL=http://minimal-python:8888
     build:
       dockerfile: Dockerfile
     depends_on:

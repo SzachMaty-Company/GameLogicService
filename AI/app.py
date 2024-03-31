@@ -26,9 +26,11 @@ settings.only_square = False
 
 @app.route("/", methods=['POST'])
 def hello():
-    return "", 200
+#     return "", 200
     data = request.get_json()
+    print(data)
     fen = data.get('fen')
+    print(fen)
 
     try:
         board = Board()

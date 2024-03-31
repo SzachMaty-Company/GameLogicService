@@ -3,8 +3,9 @@ external:
     user-service:
       url: ${USER_SERVICE_URL}
     ai-service:
-      url: ai-service
+      url: ${AI_SERVICE_URL}
 
+spring:
   data:
     redis:
       port: ${REDIS_PORT}
