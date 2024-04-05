@@ -25,6 +25,7 @@ public class GameProcessServiceImpl implements GameProcessService {
     private final MoveProcessor moveValidator;
     private final GameOperationService gameOperationService;
     private final GameClient gameClient;
+    private final TimeProcessor timeProcessor;
     private final GameFinishDetector gameFinishDetector;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -32,7 +33,7 @@ public class GameProcessServiceImpl implements GameProcessService {
     @Override
     @GameParticipantValidator
     public MoveResponseDTO processGame(GameMessage message) {
-        GameDTO gameDTO = gameOperationService.getBoards(message.getGameCode());
+        GameDTO gameDTO = gameOperationService.getGameByGameCode(message.getGameCode());
         if(gameDTO == null) {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
         }
@@ -52,7 +53,7 @@ public class GameProcessServiceImpl implements GameProcessService {
         gameProcessDTO.setGameCode(message.getGameCode());
         gameProcessDTO.setMove(message.getMove());
 
-        GameDTO gameDTO = gameOperationService.getBoards(gameProcessDTO.getGameCode());
+        GameDTO gameDTO = gameOperationService.getGameByGameCode(gameProcessDTO.getGameCode());
         if(gameDTO == null) {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
         }
@@ -122,27 +123,25 @@ public class GameProcessServiceImpl implements GameProcessService {
     private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {
         if(gameProcessDTO.isFirstMove()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            gameProcessDTO.setPrevMoveTime(timestamp.getTime());
+            gameProcessDTO.setPrevSystemTime(timestamp.getTime());
             gameProcessDTO.setWhiteTime(gameDTO.getWhiteTime());
             gameProcessDTO.setBlackTime(gameDTO.getBlackTime());
             return;
         }
-
         Side side = gameProcessDTO.getSide();
-        Long prevTime = gameDTO.getPrevMoveTime();
-        Long playerGameTime = side == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Long currTime = timestamp.getTime();
-        float diffBetweenTimeStampsInMiliSec = currTime - prevTime;
-        long diffBetweenTimeStampsInSec = Math.round(diffBetweenTimeStampsInMiliSec/1000);
-        Long updatedGameTime = playerGameTime - diffBetweenTimeStampsInSec;
 
         if(side == Side.WHITE) {
-            gameProcessDTO.setWhiteTime(updatedGameTime);
+            Long whiteTime = timeProcessor.countTime(gameProcessDTO.isFirstMove(), gameDTO.getPrevSystemTime(),
+                            currTime,  gameDTO.getWhiteTime());
+            gameProcessDTO.setWhiteTime(whiteTime);
         } else {
-            gameProcessDTO.setBlackTime(updatedGameTime);
+            Long blackTime = timeProcessor.countTime(gameProcessDTO.isFirstMove(), gameDTO.getPrevSystemTime(),
+                            currTime, gameDTO.getBlackTime());
+            gameProcessDTO.setBlackTime(blackTime);
         }
-        gameProcessDTO.setPrevMoveTime(currTime);
+        gameProcessDTO.setPrevSystemTime(currTime);
     }
 
     private InvalidMoveException buildInvalidMoveException(GameProcessDTO gameProcessDTO, GameDTO gameDTO) {

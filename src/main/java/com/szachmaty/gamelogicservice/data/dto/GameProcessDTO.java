@@ -21,7 +21,7 @@ public class GameProcessDTO {
     private LinkedList<Long> gameHistory;
     private Long whiteTime;
     private Long blackTime;
-    private Long prevMoveTime;
+    private Long prevSystemTime;
     private boolean isFirstMove;
     private boolean isFinished;
 }

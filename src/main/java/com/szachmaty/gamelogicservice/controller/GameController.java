@@ -1,13 +1,10 @@
 package com.szachmaty.gamelogicservice.controller;
 
-import com.szachmaty.gamelogicservice.service.game.GameProcessService;
-import com.szachmaty.gamelogicservice.service.gameinit.GameInitService;
-import com.szachmaty.gamelogicservice.data.dto.GameDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameInitRequest;
-import com.szachmaty.gamelogicservice.data.dto.GameInitResponse;
-import com.szachmaty.gamelogicservice.data.dto.MoveResponseDTO;
 import com.szachmaty.gamelogicservice.controller.validations.RequestValidator;
-import com.szachmaty.gamelogicservice.data.dto.GameMessage;
+import com.szachmaty.gamelogicservice.data.dto.*;
+import com.szachmaty.gamelogicservice.service.game.GameProcessService;
+import com.szachmaty.gamelogicservice.service.gameinfo.GameInfoService;
+import com.szachmaty.gamelogicservice.service.gameinit.GameInitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +24,20 @@ import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
 @Validated
 public class GameController {
 
-    private final GameInitService gameService;
+    private final GameInitService gameInitService;
+    private final GameInfoService gameInfoService;
     private final GameProcessService gameProcessService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
 
     @GetMapping(path = "/game")
     public List<GameDTO> getAllGames() {
-        return gameService.getAllGames();
+        return gameInitService.getAllGames();
+    }
+
+    @GetMapping(path = "/game-info/{gameCode}")
+    public ResponseEntity<GameInfoDTO> getGameByGameCode(@PathVariable String gameCode) {
+        return new ResponseEntity<>(gameInfoService.getGameByGameCode(gameCode), HttpStatus.OK);
     }
 
     @PostMapping(path = GAME_INIT)
@@ -43,7 +46,7 @@ public class GameController {
             @RequestValidator
             GameInitRequest gCR
     ) {
-        return new ResponseEntity<>(gameService.initGame(gCR), HttpStatus.OK);
+        return new ResponseEntity<>(gameInitService.initGame(gCR), HttpStatus.OK);
     }
 
     @MessageMapping("/move")

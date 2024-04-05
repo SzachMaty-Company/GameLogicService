@@ -62,7 +62,7 @@ public class GameOperationServiceImpl implements GameOperationService {
     }
 
     @Override
-    public GameDTO getBoards(String gameCode) {
+    public GameDTO getGameByGameCode(String gameCode) {
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game == null) {
             return null;
@@ -108,11 +108,13 @@ public class GameOperationServiceImpl implements GameOperationService {
             }
             if(side == Side.WHITE) {
                 game.setWhiteTime(gameProcessDTO.getWhiteTime());
+                game.setSideToMove(Side.BLACK);
             }
             else {
                 game.setBlackTime(gameProcessDTO.getBlackTime());
+                game.setSideToMove(Side.WHITE);
             }
-            game.setPrevMoveTime(gameProcessDTO.getPrevMoveTime());
+            game.setPrevSystemTime(gameProcessDTO.getPrevSystemTime());
             GameEntity gameEntity = gameEntityRepository.save(game);
             return mapperProvider.modelMapper().map(gameEntity, GameDTO.class);
         } else {

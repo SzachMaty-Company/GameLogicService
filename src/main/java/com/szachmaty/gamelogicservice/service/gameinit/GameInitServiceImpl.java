@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.service.gameinit;
 
+import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 public class GameInitServiceImpl implements GameInitService {
 
     private final GameOperationService gameOperationService;
+    private final static String GAME_INIT_ERROR = "Cannot create valid gameCode!";
 
     public GameInitResponse initGame(GameInitRequest initReq) {
         return createGame(initReq);
@@ -34,7 +36,7 @@ public class GameInitServiceImpl implements GameInitService {
     private GameInitResponse createGame(GameInitRequest initReq) {
         String gameCode = GameInitUtil.generateGameCode();
         if("".equals(gameCode)) {
-            throw new GameInitException("Cannot create valid gameCode!");
+            throw new GameInitException(GAME_INIT_ERROR);
         }
         Long parsedTime = GameInitUtil.gameTimeParser(initReq.gameTime());
 
@@ -51,7 +53,8 @@ public class GameInitServiceImpl implements GameInitService {
                 .gameStatus(GameStatus.NOT_STARTED)
                 .blackTime(parsedTime)
                 .whiteTime(parsedTime)
-                .prevMoveTime(parsedTime*3)
+                .prevSystemTime(parsedTime*3)
+                .sideToMove(Side.WHITE)
                 .boardStateList(new ArrayList<>())
                 .moveList(new ArrayList<>())
                 .isGameWithAI(isAIMode)

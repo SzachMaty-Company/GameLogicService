@@ -6,7 +6,7 @@ import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import java.util.List;
 
 public interface GameOperationService {
-    GameDTO getBoards(String gameCode);
+    GameDTO getGameByGameCode(String gameCode);
     void saveNewGame(GameDTO gameDTO);
     GameDTO updateBoard(GameProcessDTO gameProcessDTO);
     void deleteGameByGameCode(String gameCode);

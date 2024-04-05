@@ -15,6 +15,7 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
 
     private final static int IS_WINNER = 1;
     private final static int NO_WINNER = 0;
+    private final static String GAME_COMPLETION_ERROR = "An error occurred while checking the game's completion status!";
 
     @Override
     public GameFinishDTO checkResultBasedOnBoard(GameProcessDTO gameProcessDTO) {
@@ -59,7 +60,7 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         if(whiteTime != null && whiteTime < 0) {
             int[] resultArray = blackPlayerInsufficientMaterialToWinChecker(pieces);
             if(resultArray.length != 4) {
-                throw new RuntimeException("An error occurred while checking the game's completion status!");
+                throw new GameException(GAME_COMPLETION_ERROR);
             }
             isBlackWinner = resultArray[0] == IS_WINNER;
             if(!isBlackWinner) {
@@ -70,7 +71,7 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         else if(blackTime != null && blackTime < 0) {
             int[] resultArray = whitePlayerInsufficientMaterialToWinChecker(pieces);
             if(resultArray.length != 4) {
-                throw new GameException("An error occurred while checking the game's completion status!");
+                throw new GameException(GAME_COMPLETION_ERROR);
             }
             isWhiteWinner = resultArray[0] == IS_WINNER;
             if(!isWhiteWinner) {

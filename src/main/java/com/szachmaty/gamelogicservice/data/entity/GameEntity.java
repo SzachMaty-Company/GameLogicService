@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.data.entity;
 
+import com.github.bhlangonijr.chesslib.Side;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -34,7 +35,8 @@ public class GameEntity implements Serializable {
     private Long whiteTime;
     @ToString.Exclude
     private Long blackTime;
-    private Long prevMoveTime;
+    private Long prevSystemTime;
+    private Side sideToMove;
     private GameStatus gameStatus;
     private List<String> boardStateList;
     private LinkedList<Long> gameHistory;

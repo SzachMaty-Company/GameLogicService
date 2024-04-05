@@ -24,6 +24,12 @@ public class GameParticipantValidatorAspect {
 
     private final GameOperationService gameOperationService;
 
+    private final static String BAD_CREDENTIALS = "Bad credentials!";
+    private final static String NOT_GAME_PARTICIPANT = "Player is not this game participant!";
+    private final static String INCORRECT_TURN = "Incorrect turn - Now it's opponent turn";
+    private final static String NULL_AUTHENTICATION = "Authentication is null!";
+    private final static String NULL_PRINCIPAL = "Principal is null!";
+
     @Before("@annotation(GameParticipantValidator)")
     public void validate(JoinPoint joinPoint) {
         List<Object> args = Arrays.stream(joinPoint.getArgs()).toList();
@@ -32,34 +38,34 @@ public class GameParticipantValidatorAspect {
             SecurityContext securityContext = SecurityContextHolder.getContext();
             Authentication auth = securityContext.getAuthentication();
             if(auth == null) {
-                log.error("Authentication is null!");
-                throw new BadCredentialsException("Bad credentials!");
+                log.error(NULL_AUTHENTICATION);
+                throw new BadCredentialsException(BAD_CREDENTIALS);
             }
             String principal = (String) auth.getPrincipal();
             if(principal == null) {
-                log.error("Principal is null!");
-                throw new BadCredentialsException("Bad credentials!");
+                log.error(NULL_PRINCIPAL);
+                throw new BadCredentialsException(BAD_CREDENTIALS);
             }
 
             if(arg1 instanceof GameMessage gameMessage) {
                 boolean isValid = gameOperationService
                         .isPlayerGameParticipant(gameMessage.getGameCode(), principal);
                 if(!isValid) {
-                    log.error("Player is not this game participant!");
-                    throw new BadCredentialsException("Player is not this game participant!");
+                    log.error(NOT_GAME_PARTICIPANT);
+                    throw new BadCredentialsException(NOT_GAME_PARTICIPANT);
                 }
 
                 boolean isPlayerTurn = gameOperationService
                         .validatePlayerTurn(gameMessage.getGameCode(), principal);
                 if(!isPlayerTurn) {
-                    log.error("Incorrect turn - Now it's opponent turn");
-                    throw new BadCredentialsException("Incorrect turn - Now it's opponent turn!");
+                    log.error(INCORRECT_TURN);
+                    throw new BadCredentialsException(INCORRECT_TURN);
                 }
             } else {
-                throw new BadCredentialsException("Bad credentials!");
+                throw new BadCredentialsException(BAD_CREDENTIALS);
             }
         } else {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException(BAD_CREDENTIALS);
         }
     }
 

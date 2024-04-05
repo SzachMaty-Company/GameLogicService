@@ -16,6 +16,9 @@ public class MoveProcessorImpl implements MoveProcessor {
     private final static int MOVE_LEN = 4;
     private final Board board;
     private final static CharSequence PROMOTIONS = "QRBN";
+    private final static String MOVE_PROCESSING_ERROR = "An error occured during move processing!";
+    private final static String INVALID_PIECE_PROMOTION = "Invalid piece promotion!";
+
 
     public MoveProcessorImpl() {
         board = new Board();
@@ -35,7 +38,7 @@ public class MoveProcessorImpl implements MoveProcessor {
             try {
                 isValid = board.doMove(move, true);
             } catch(Exception e) {
-                throw new InvalidMoveException("An error occured during move processing!");
+                throw new InvalidMoveException(MOVE_PROCESSING_ERROR);
             }
         }
         LinkedList<Long> l = board.getHistory();
@@ -54,7 +57,7 @@ public class MoveProcessorImpl implements MoveProcessor {
         if(currMove.length() > MOVE_LEN) {
             String promotion = String.valueOf(currMove.charAt(4));
             if(!StringUtils.containsAnyIgnoreCase(promotion, PROMOTIONS)) {
-                throw new InvalidMoveException("Invalid piece promotion!");
+                throw new InvalidMoveException(INVALID_PIECE_PROMOTION);
             }
         }
         return new Move(currMove, side);
