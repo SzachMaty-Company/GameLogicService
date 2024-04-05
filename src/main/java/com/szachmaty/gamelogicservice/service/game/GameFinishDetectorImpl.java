@@ -4,7 +4,7 @@ import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameFinishDTO;
+import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +18,12 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
     private final static String GAME_COMPLETION_ERROR = "An error occurred while checking the game's completion status!";
 
     @Override
-    public GameFinishDTO checkResultBasedOnBoard(GameProcessDTO gameProcessDTO) {
+    public GameStatus checkResultBasedOnBoard(GameProcessDTO gameProcessDTO) {
         LinkedList<Long> gameHistory = gameProcessDTO.getGameHistory();
         String boardState = gameProcessDTO.getAfterMoveBoardState();
         Side side = gameProcessDTO.getSide();
-        boolean isWhiteWinner = false;
-        boolean isBlackWinner = false;
         boolean isDraw;
+        GameStatus gameStatus = GameStatus.IN_GAME;
 
         Board board = new Board();
         if(gameHistory != null) {
@@ -34,21 +33,25 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         }
         board.loadFromFen(boardState);
         isDraw = board.isDraw();
-        boolean isMate = board.isMated();
-
-        if(isMate && side.equals(Side.WHITE)) {
-            isWhiteWinner = true;
-        } else if(isMate && side.equals(Side.BLACK)) {
-            isBlackWinner = true;
+        if(isDraw) {
+            gameStatus = GameStatus.DRAW;
         }
-        boolean isFinish = isWhiteWinner || isBlackWinner || isDraw;
-        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw, isFinish);
+
+        boolean isMate = board.isMated();
+        if(isMate && side.equals(Side.WHITE)) {
+            gameStatus = GameStatus.WHITE_WINNER;
+        } else if(isMate && side.equals(Side.BLACK)) {
+            gameStatus = GameStatus.BLACK_WINNER;
+        }
+
+        return gameStatus;
     }
 
-    public GameFinishDTO checkResultBasedOnTime(GameProcessDTO gameProcessDTO) {
+    public GameStatus checkResultBasedOnTime(GameProcessDTO gameProcessDTO) {
         String boardState = gameProcessDTO.getAfterMoveBoardState();
         Long whiteTime = gameProcessDTO.getWhiteTime();
         Long blackTime = gameProcessDTO.getBlackTime();
+        GameStatus gameStatus = GameStatus.IN_GAME;
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;
         boolean isDraw = false;
@@ -80,8 +83,16 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
             }
 
         }
-        boolean isFinish = isWhiteWinner || isBlackWinner || isDraw;
-        return new GameFinishDTO(isWhiteWinner, isBlackWinner, isDraw, isFinish);
+
+        if(isWhiteWinner) {
+            gameStatus = GameStatus.WHITE_WINNER;
+        } else if(isBlackWinner) {
+            gameStatus = GameStatus.BLACK_WINNER;
+        } else if(isDraw) {
+            gameStatus = GameStatus.DRAW;
+        }
+
+        return gameStatus;
     }
 
     private boolean determineIsDraw(int[] resultArray) {

@@ -1,7 +1,11 @@
 package com.szachmaty.gamelogicservice.data.dto;
 
 import com.github.bhlangonijr.chesslib.Side;
-import lombok.*;
+import com.szachmaty.gamelogicservice.data.entity.GameStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.LinkedList;
 
@@ -23,5 +27,6 @@ public class GameProcessDTO {
     private Long blackTime;
     private Long prevSystemTime;
     private boolean isFirstMove;
+    private GameStatus gameStatus;
     private boolean isFinished;
 }

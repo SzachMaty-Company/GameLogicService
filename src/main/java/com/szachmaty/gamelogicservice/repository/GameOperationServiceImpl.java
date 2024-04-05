@@ -1,12 +1,12 @@
 package com.szachmaty.gamelogicservice.repository;
 
 import com.github.bhlangonijr.chesslib.Side;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameDTO;
-import com.szachmaty.gamelogicservice.data.entity.GameEntity;
-import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.config.mapper.Mapper;
+import com.szachmaty.gamelogicservice.data.dto.GameDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.entity.GameEntity;
 import com.szachmaty.gamelogicservice.exception.GameEntityNotFoundException;
+import com.szachmaty.gamelogicservice.exception.GameFinishException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,8 @@ public class GameOperationServiceImpl implements GameOperationService {
 
     private final GameEntityRepository gameEntityRepository;
     private final Mapper mapperProvider;
+    private final static String GAME_NOT_EXISTS = "Game was finished or never existed!";
+
 
     @Override
     public List<GameDTO> getAll() {
@@ -101,10 +103,10 @@ public class GameOperationServiceImpl implements GameOperationService {
             }
             game.setGameHistory(gameHistory);
             if(isFirstMove) {
-                game.setGameStatus(GameStatus.IN_GAME);
+                game.setGameStatus(gameProcessDTO.getGameStatus());
             }
             if(isFinished) {
-                game.setGameStatus(GameStatus.FINISHED);
+                game.setGameStatus(gameProcessDTO.getGameStatus());
             }
             if(side == Side.WHITE) {
                 game.setWhiteTime(gameProcessDTO.getWhiteTime());
@@ -131,15 +133,19 @@ public class GameOperationServiceImpl implements GameOperationService {
     @Override
     public void deleteGameByGameCode(String gameCode) {
         if(gameCode != null && !gameCode.isEmpty()) {
-            gameEntityRepository.deleteByGameCode(gameCode);
+            GameEntity game = gameEntityRepository.findByGameCode(gameCode);
+            gameEntityRepository.delete(game); //spring-data-redis doesn't support deleteBy
         }
     }
 
     @Override
     public boolean isPlayerGameParticipant(String gameCode, String userId) {
         GameEntity gameEntity = gameEntityRepository.findByGameCode(gameCode);
-        return gameEntity != null  && (userId.equals(gameEntity.getWhiteUserId()) ||
-                        userId.equals(gameEntity.getBlackUserId()));
+        if(gameEntity == null) {
+            throw new GameFinishException(GAME_NOT_EXISTS);
+        }
+        return userId.equals(gameEntity.getWhiteUserId()) ||
+                        userId.equals(gameEntity.getBlackUserId());
     }
 
 }

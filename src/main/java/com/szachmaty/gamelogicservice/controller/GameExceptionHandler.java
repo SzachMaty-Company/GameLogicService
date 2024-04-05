@@ -2,8 +2,10 @@ package com.szachmaty.gamelogicservice.controller;
 
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.dto.MoveResponseDTO;
+import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameClientException;
 import com.szachmaty.gamelogicservice.exception.GameException;
+import com.szachmaty.gamelogicservice.exception.GameFinishException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -54,12 +56,18 @@ public class GameExceptionHandler {
         String gameCode = (String) auth.getCredentials();
         GameDTO gameDTO = gameOperationService.getGameByGameCode(gameCode);
 
+        boolean isGameFinished = false;
+        if(e instanceof GameFinishException) {
+            isGameFinished = true;
+        }
         String destination = QUEUE_URL + gameCode;
         String lastBoardState = INIT_CHESS_BOARD;
         String lastMove = null;
-        String nextPlayerMove = gameDTO.getSideToMove().name();
+        String nextPlayerMove = isGameFinished ? null : gameDTO.getSideToMove().name();
+        GameStatus gameStatus = GameStatus.FINISHED;
 
         if(gameDTO != null) {
+            gameStatus = gameDTO.getGameStatus();
             if(gameDTO.getBoardStateList() != null && !gameDTO.getBoardStateList().isEmpty()) {
                 lastBoardState = gameDTO.getBoardStateList().get(gameDTO.getBoardStateList().size() - 1);
             }
@@ -73,8 +81,12 @@ public class GameExceptionHandler {
                 lastBoardState,
                 null,
                 nextPlayerMove,
+                gameStatus,
                 e.getMessage()
         );
+
+
+
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
 

@@ -1,15 +1,16 @@
 package com.szachmaty.gamelogicservice.service.game;
 
 import com.github.bhlangonijr.chesslib.Side;
+import com.szachmaty.gamelogicservice.data.dto.GameDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameMessage;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.dto.MoveResponseDTO;
+import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.data.dto.GameDTO;
-import com.szachmaty.gamelogicservice.controller.apiclient.GameClient;
-import com.szachmaty.gamelogicservice.data.dto.GameFinishDTO;
-import com.szachmaty.gamelogicservice.data.dto.MoveResponseDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameMessage;
+import com.szachmaty.gamelogicservice.service.game.external.AIMessageEventData;
+import com.szachmaty.gamelogicservice.service.game.external.UserServiceEventData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,11 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     private final MoveProcessor moveValidator;
     private final GameOperationService gameOperationService;
-    private final GameClient gameClient;
     private final TimeProcessor timeProcessor;
     private final GameFinishDetector gameFinishDetector;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    private final static String GAME_FINISH = "Cannot perform move, game is finished!";
 
     @Override
     @GameParticipantValidator
@@ -37,10 +38,13 @@ public class GameProcessServiceImpl implements GameProcessService {
         if(gameDTO == null) {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
         }
+        if(determineIfGameIsFinished(gameDTO.getGameStatus())) {
+            throw new InvalidMoveException(GAME_FINISH);
+        }
         if(gameDTO.isGameWithAI()) {
             MoveResponseDTO responseDTO = processMove(message);
-            GameAIMessageEventData eventData =
-                    new GameAIMessageEventData(this, message.getGameCode(), responseDTO.fen());
+            AIMessageEventData eventData =
+                    new AIMessageEventData(this, message.getGameCode(), responseDTO.fen());
             applicationEventPublisher.publishEvent(eventData); //async
             return responseDTO;
         }
@@ -87,13 +91,20 @@ public class GameProcessServiceImpl implements GameProcessService {
 
         if(gameProcessDTO.getAfterMoveBoardState() != null) {
             updateTime(gameDTO, gameProcessDTO);
-            GameFinishDTO boardStateFinish = gameFinishDetector
-                    .checkResultBasedOnBoard(gameProcessDTO);
-            GameFinishDTO timeFinish = gameFinishDetector
-                    .checkResultBasedOnTime(gameProcessDTO);
 
-            if((boardStateFinish != null && boardStateFinish.isFinish()) ||
-                    timeFinish != null && timeFinish.isFinish() ) {
+            GameStatus boardStateFinish = gameFinishDetector
+                    .checkResultBasedOnBoard(gameProcessDTO);
+            gameProcessDTO.setGameStatus(boardStateFinish);
+            if(determineIfGameIsFinished(boardStateFinish)) {
+                GameDTO game = gameOperationService.updateBoard(gameProcessDTO);
+                notifyUserDataService(game);
+                return gameProcessToMoveResponeConverter(gameProcessDTO);
+            }
+
+            GameStatus timeFinish = gameFinishDetector
+                    .checkResultBasedOnTime(gameProcessDTO);
+            gameProcessDTO.setGameStatus(timeFinish);
+            if(determineIfGameIsFinished(timeFinish)) {
                 GameDTO game = gameOperationService.updateBoard(gameProcessDTO);
                 notifyUserDataService(game);
                 return gameProcessToMoveResponeConverter(gameProcessDTO);
@@ -104,6 +115,12 @@ public class GameProcessServiceImpl implements GameProcessService {
         } else {
             throw buildInvalidMoveException(gameProcessDTO, gameDTO);
         }
+    }
+
+    private boolean determineIfGameIsFinished(GameStatus gameStatus) {
+        return gameStatus == GameStatus.WHITE_WINNER ||
+                gameStatus == GameStatus.BLACK_WINNER ||
+                gameStatus == GameStatus.DRAW;
     }
 
     private MoveResponseDTO gameProcessToMoveResponeConverter(GameProcessDTO gameProcessDTO) {
@@ -117,7 +134,7 @@ public class GameProcessServiceImpl implements GameProcessService {
             nextMove = Side.WHITE;
         }
         return new MoveResponseDTO(gameProcessDTO.getMove(),
-                gameProcessDTO.getAfterMoveBoardState(), time, nextMove.toString());
+                gameProcessDTO.getAfterMoveBoardState(), time, nextMove.toString(), gameProcessDTO.getGameStatus());
     }
 
     private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {
@@ -154,8 +171,8 @@ public class GameProcessServiceImpl implements GameProcessService {
     }
 
     private void notifyUserDataService(GameDTO game) {
+        UserServiceEventData eventData = new UserServiceEventData(this, game);
+        applicationEventPublisher.publishEvent(eventData);
         System.out.println("Wyslaned do klienta " + game.toString());
-//        gameClient.sendGameAfterFinish(game);
-        gameOperationService.deleteGameByGameCode(game.getGameCode());
     }
 }

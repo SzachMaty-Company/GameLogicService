@@ -2,6 +2,7 @@ package com.szachmaty.gamelogicservice.controller;
 
 import com.szachmaty.gamelogicservice.controller.validations.RequestValidator;
 import com.szachmaty.gamelogicservice.data.dto.*;
+import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import com.szachmaty.gamelogicservice.service.game.GameProcessService;
 import com.szachmaty.gamelogicservice.service.gameinfo.GameInfoService;
 import com.szachmaty.gamelogicservice.service.gameinit.GameInitService;
@@ -29,6 +30,7 @@ public class GameController {
     private final GameProcessService gameProcessService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
+    private final GameOperationService gameOperationService;
 
     @GetMapping(path = "/game")
     public List<GameDTO> getAllGames() {
@@ -40,6 +42,10 @@ public class GameController {
         return new ResponseEntity<>(gameInfoService.getGameByGameCode(gameCode), HttpStatus.OK);
     }
 
+    @DeleteMapping(path = "/game/{gameCode}")
+    public void deleteGame(@PathVariable String gameCode) {
+        gameOperationService.deleteGameByGameCode(gameCode);
+    }
     @PostMapping(path = GAME_INIT)
     public ResponseEntity<GameInitResponse> createGame(
             @RequestBody
