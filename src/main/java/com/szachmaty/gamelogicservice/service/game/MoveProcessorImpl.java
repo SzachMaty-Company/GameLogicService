@@ -56,7 +56,7 @@ public class MoveProcessorImpl implements MoveProcessor {
     private Move prepareMove(String currMove, Side side) {
         if(currMove.length() > MOVE_LEN) {
             String promotion = String.valueOf(currMove.charAt(4));
-            if(!StringUtils.containsAnyIgnoreCase(promotion, PROMOTIONS)) {
+            if(!StringUtils.containsAnyIgnoreCase(promotion, "Q", "R", "B", "N")) {
                 throw new InvalidMoveException(INVALID_PIECE_PROMOTION);
             }
         }
