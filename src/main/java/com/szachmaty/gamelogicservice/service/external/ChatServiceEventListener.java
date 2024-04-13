@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.external;
+package com.szachmaty.gamelogicservice.service.external;
 
 import com.szachmaty.gamelogicservice.controller.apiclient.ChatServiceClient;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;

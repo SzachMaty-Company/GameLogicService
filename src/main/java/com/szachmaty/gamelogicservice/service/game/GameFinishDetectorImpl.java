@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.service.game;
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
     private final static String GAME_COMPLETION_ERROR = "An error occurred while checking the game's completion status!";
 
     @Override
-    public GameStatus checkResultBasedOnBoard(GameProcessDTO gameProcessDTO) {
-        LinkedList<Long> gameHistory = gameProcessDTO.getGameHistory();
-        String boardState = gameProcessDTO.getAfterMoveBoardState();
-        Side side = gameProcessDTO.getSide();
+    public GameStatus checkResultBasedOnBoard(GameProcessContext gameProcessContext) {
+        LinkedList<Long> gameHistory = gameProcessContext.getGameHistory();
+        String boardState = gameProcessContext.getAfterMoveBoardState();
+        Side side = gameProcessContext.getSide();
         boolean isDraw;
         GameStatus gameStatus = GameStatus.IN_GAME;
 
@@ -47,10 +47,10 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         return gameStatus;
     }
 
-    public GameStatus checkResultBasedOnTime(GameProcessDTO gameProcessDTO) {
-        String boardState = gameProcessDTO.getAfterMoveBoardState();
-        Long whiteTime = gameProcessDTO.getWhiteTime();
-        Long blackTime = gameProcessDTO.getBlackTime();
+    public GameStatus checkResultBasedOnTime(GameProcessContext gameProcessContext) {
+        String boardState = gameProcessContext.getAfterMoveBoardState();
+        Long whiteTime = gameProcessContext.getWhiteTime();
+        Long blackTime = gameProcessContext.getBlackTime();
         GameStatus gameStatus = GameStatus.IN_GAME;
         boolean isWhiteWinner = false;
         boolean isBlackWinner = false;

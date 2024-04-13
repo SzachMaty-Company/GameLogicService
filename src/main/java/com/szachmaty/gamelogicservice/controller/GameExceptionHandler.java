@@ -27,10 +27,10 @@ import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
 @RequiredArgsConstructor
 public class GameExceptionHandler {
 
-    private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final GameOperationService gameOperationService;
+
+    private final static String INIT_CHESS_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     @ExceptionHandler({ GameClientException.class })
     @SuppressWarnings("rawtypes")
@@ -64,7 +64,7 @@ public class GameExceptionHandler {
         String lastBoardState = INIT_CHESS_BOARD;
         String lastMove = null;
         String nextPlayerMove = isGameFinished ? null : gameDTO.getSideToMove().name();
-        GameStatus gameStatus = GameStatus.FINISHED;
+        GameStatus gameStatus = GameStatus.NOT_FOUND;
 
         if(gameDTO != null) {
             gameStatus = gameDTO.getGameStatus();
@@ -84,8 +84,6 @@ public class GameExceptionHandler {
                 gameStatus,
                 e.getMessage()
         );
-
-
 
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }

@@ -2,7 +2,7 @@ package com.szachmaty.gamelogicservice.service.game;
 
 import com.github.bhlangonijr.chesslib.*;
 import com.github.bhlangonijr.chesslib.move.Move;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -25,10 +25,10 @@ public class MoveProcessorImpl implements MoveProcessor {
     }
 
     @Override
-    public boolean doMove(GameProcessDTO gameProcessDTO) {
-        String currMove = gameProcessDTO.getMove();
-        Side side = gameProcessDTO.getSide();
-        String currBoardState = gameProcessDTO.getCurrBoardState();
+    public boolean doMove(GameProcessContext gameProcessContext) {
+        String currMove = gameProcessContext.getMove();
+        Side side = gameProcessContext.getSide();
+        String currBoardState = gameProcessContext.getCurrBoardState();
 
         Move move = prepareMove(currMove, side);
         board.loadFromFen(currBoardState);
@@ -41,7 +41,6 @@ public class MoveProcessorImpl implements MoveProcessor {
                 throw new InvalidMoveException(MOVE_PROCESSING_ERROR);
             }
         }
-        LinkedList<Long> l = board.getHistory();
         return isValid;
     }
 

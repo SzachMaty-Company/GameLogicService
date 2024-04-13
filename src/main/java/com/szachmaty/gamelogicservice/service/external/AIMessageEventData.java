@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.external;
+package com.szachmaty.gamelogicservice.service.external;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

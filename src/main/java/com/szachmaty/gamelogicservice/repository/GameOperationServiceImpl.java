@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.repository;
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.config.mapper.Mapper;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameEntity;
 import com.szachmaty.gamelogicservice.exception.GameEntityNotFoundException;
 import com.szachmaty.gamelogicservice.exception.GameFinishException;
@@ -73,14 +73,13 @@ public class GameOperationServiceImpl implements GameOperationService {
     }
 
     @Override
-    public GameDTO updateBoard(GameProcessDTO gameProcessDTO) {
-        String gameCode = gameProcessDTO.getGameCode();
-        String move = gameProcessDTO.getMove();
-        String boardState = gameProcessDTO.getAfterMoveBoardState();
-        Side side = gameProcessDTO.getSide();
-        LinkedList<Long> gameHistory = gameProcessDTO.getGameHistory();
-        boolean isFinished = gameProcessDTO.isFinished();
-        boolean isFirstMove = gameProcessDTO.isFirstMove();
+    public GameDTO updateBoard(GameProcessContext gameProcessContext) {
+        String gameCode = gameProcessContext.getGameCode();
+        String move = gameProcessContext.getMove();
+        String boardState = gameProcessContext.getAfterMoveBoardState();
+        Side side = gameProcessContext.getSide();
+        LinkedList<Long> gameHistory = gameProcessContext.getGameHistory();
+        boolean isFirstMove = gameProcessContext.isFirstMove();
 
         GameEntity game = gameEntityRepository.findByGameCode(gameCode);
         if(game != null) {
@@ -102,21 +101,20 @@ public class GameOperationServiceImpl implements GameOperationService {
                 game.setFenList(boards);
             }
             game.setGameHistory(gameHistory);
+            game.setGameStatus(gameProcessContext.getGameStatus());
+
             if(isFirstMove) {
-                game.setGameStatus(gameProcessDTO.getGameStatus());
-            }
-            if(isFinished) {
-                game.setGameStatus(gameProcessDTO.getGameStatus());
+                game.setGameStatus(gameProcessContext.getGameStatus());
             }
             if(side == Side.WHITE) {
-                game.setWhiteTime(gameProcessDTO.getWhiteTime());
+                game.setWhiteTime(gameProcessContext.getWhiteTime());
                 game.setSideToMove(Side.BLACK);
             }
             else {
-                game.setBlackTime(gameProcessDTO.getBlackTime());
+                game.setBlackTime(gameProcessContext.getBlackTime());
                 game.setSideToMove(Side.WHITE);
             }
-            game.setPrevSystemTime(gameProcessDTO.getPrevSystemTime());
+            game.setPrevSystemTime(gameProcessContext.getPrevSystemTime());
             GameEntity gameEntity = gameEntityRepository.save(game);
             return mapperProvider.modelMapper().map(gameEntity, GameDTO.class);
         } else {

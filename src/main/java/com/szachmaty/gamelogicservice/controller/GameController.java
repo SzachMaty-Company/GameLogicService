@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.controller;
 import com.szachmaty.gamelogicservice.controller.validations.RequestValidator;
 import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.service.game.GameProcessService;
+import com.szachmaty.gamelogicservice.service.game.chain.GamePreparation;
 import com.szachmaty.gamelogicservice.service.gameinfo.GameInfoService;
 import com.szachmaty.gamelogicservice.service.gameinit.GameInitService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class GameController {
 
     private final GameInitService gameInitService;
     private final GameInfoService gameInfoService;
-    private final GameProcessService gameProcessService;
+    private final GamePreparation gamePreparation;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     private final GameOperationService gameOperationService;
@@ -56,7 +56,7 @@ public class GameController {
 
     @MessageMapping("/move")
     public void processChessMove(@RequestValidator GameMessage message) {
-        MoveResponseDTO moveResponseDTO = gameProcessService.processGame(message);
+        MoveResponseDTO moveResponseDTO = gamePreparation.prepare(message);
         String destination = QUEUE_URL + message.getGameCode();
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }

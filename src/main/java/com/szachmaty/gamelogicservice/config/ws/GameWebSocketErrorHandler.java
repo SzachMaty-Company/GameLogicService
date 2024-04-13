@@ -36,6 +36,5 @@ public class GameWebSocketErrorHandler extends StompSubProtocolErrorHandler {
 
         byte b[] = new byte[1];
         return MessageBuilder.createMessage(message != null ? message.getBytes() : b, accessor.getMessageHeaders());
-
     }
 }

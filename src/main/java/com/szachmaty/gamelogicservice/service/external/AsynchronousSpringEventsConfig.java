@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.external;
+package com.szachmaty.gamelogicservice.service.external;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

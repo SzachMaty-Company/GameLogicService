@@ -1,7 +1,7 @@
 package com.szachmaty.gamelogicservice.service.game;
 
 import com.github.bhlangonijr.chesslib.Side;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +26,11 @@ class GameFinishDetectorImplTest {
         String board = "rnbqkbnr/3ppQpp/8/ppp5/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4";
 //        String board = "rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 2";
         GameStatus expected = GameStatus.WHITE_WINNER;
-        GameProcessDTO gameProcessDTO = new GameProcessDTO();
-        gameProcessDTO.setAfterMoveBoardState(board);
-        gameProcessDTO.setSide(Side.WHITE);
+        GameProcessContext gameProcessContext = new GameProcessContext();
+        gameProcessContext.setAfterMoveBoardState(board);
+        gameProcessContext.setSide(Side.WHITE);
 
-        GameStatus result = gameFinishDetector.checkResultBasedOnBoard(gameProcessDTO);
+        GameStatus result = gameFinishDetector.checkResultBasedOnBoard(gameProcessContext);
 
         assertEquals(expected, result);
     }

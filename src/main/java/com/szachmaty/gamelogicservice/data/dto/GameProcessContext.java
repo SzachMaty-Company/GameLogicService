@@ -16,7 +16,7 @@ import java.util.LinkedList;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameProcessDTO {
+public class GameProcessContext {
     private String gameCode;
     private String move;
     private String currBoardState;
@@ -26,7 +26,6 @@ public class GameProcessDTO {
     private Long whiteTime;
     private Long blackTime;
     private Long prevSystemTime;
-    private boolean isFirstMove;
     private GameStatus gameStatus;
-    private boolean isFinished;
+    private boolean isFirstMove;
 }

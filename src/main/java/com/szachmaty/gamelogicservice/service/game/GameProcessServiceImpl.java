@@ -6,8 +6,8 @@ import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.service.game.external.AIMessageEventData;
-import com.szachmaty.gamelogicservice.service.game.external.UserServiceEventData;
+import com.szachmaty.gamelogicservice.service.external.AIMessageEventData;
+import com.szachmaty.gamelogicservice.service.external.UserServiceEventData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -50,11 +50,11 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     @Override
     public MoveResponseDTO processMove(GameMessage message) {
-        GameProcessDTO gameProcessDTO = new GameProcessDTO();
-        gameProcessDTO.setGameCode(message.getGameCode());
-        gameProcessDTO.setMove(message.getMove());
+        GameProcessContext gameProcessContext = new GameProcessContext();
+        gameProcessContext.setGameCode(message.getGameCode());
+        gameProcessContext.setMove(message.getMove());
 
-        GameDTO gameDTO = gameOperationService.getGameByGameCode(gameProcessDTO.getGameCode());
+        GameDTO gameDTO = gameOperationService.getGameByGameCode(gameProcessContext.getGameCode());
         if(gameDTO == null) {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
         }
@@ -64,53 +64,53 @@ public class GameProcessServiceImpl implements GameProcessService {
         if(boards != null) {
             Side side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
             String currBoardState = boards.isEmpty() ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
-            gameProcessDTO.setSide(side);
-            gameProcessDTO.setCurrBoardState(currBoardState);
+            gameProcessContext.setSide(side);
+            gameProcessContext.setCurrBoardState(currBoardState);
         } else { //first move
-            gameProcessDTO.setFirstMove(true);
-            gameProcessDTO.setSide(Side.WHITE);
-            gameProcessDTO.setCurrBoardState(INIT_CHESS_BOARD);
+            gameProcessContext.setFirstMove(true);
+            gameProcessContext.setSide(Side.WHITE);
+            gameProcessContext.setCurrBoardState(INIT_CHESS_BOARD);
         }
 
         try {
-            boolean isMoveValid = moveValidator.doMove(gameProcessDTO);
+            boolean isMoveValid = moveValidator.doMove(gameProcessContext);
             if(isMoveValid) {
                 String afterMoveBoardState = moveValidator.getBoardState();
                 LinkedList<Long> gameHistory = moveValidator.getHistory();
-                gameProcessDTO.setAfterMoveBoardState(afterMoveBoardState);
-                gameProcessDTO.setGameHistory(gameHistory);
+                gameProcessContext.setAfterMoveBoardState(afterMoveBoardState);
+                gameProcessContext.setGameHistory(gameHistory);
             } else {
-                throw buildInvalidMoveException(gameProcessDTO, gameDTO);
+                throw buildInvalidMoveException(gameProcessContext, gameDTO);
             }
         } catch(Exception e) {
-            throw buildInvalidMoveException(gameProcessDTO, gameDTO);
+            throw buildInvalidMoveException(gameProcessContext, gameDTO);
         }
 
-        if(gameProcessDTO.getAfterMoveBoardState() != null) {
-            updateTime(gameDTO, gameProcessDTO);
+        if(gameProcessContext.getAfterMoveBoardState() != null) {
+            updateTime(gameDTO, gameProcessContext);
 
             GameStatus boardStateFinish = gameFinishDetector
-                    .checkResultBasedOnBoard(gameProcessDTO);
-            gameProcessDTO.setGameStatus(boardStateFinish);
+                    .checkResultBasedOnBoard(gameProcessContext);
+            gameProcessContext.setGameStatus(boardStateFinish);
             if(determineIfGameIsFinished(boardStateFinish)) {
-                GameDTO game = gameOperationService.updateBoard(gameProcessDTO);
+                GameDTO game = gameOperationService.updateBoard(gameProcessContext);
                 notifyUserDataService(game);
-                return gameProcessToMoveResponeConverter(gameProcessDTO);
+                return gameProcessToMoveResponeConverter(gameProcessContext);
             }
 
             GameStatus timeFinish = gameFinishDetector
-                    .checkResultBasedOnTime(gameProcessDTO);
-            gameProcessDTO.setGameStatus(timeFinish);
+                    .checkResultBasedOnTime(gameProcessContext);
+            gameProcessContext.setGameStatus(timeFinish);
             if(determineIfGameIsFinished(timeFinish)) {
-                GameDTO game = gameOperationService.updateBoard(gameProcessDTO);
+                GameDTO game = gameOperationService.updateBoard(gameProcessContext);
                 notifyUserDataService(game);
-                return gameProcessToMoveResponeConverter(gameProcessDTO);
+                return gameProcessToMoveResponeConverter(gameProcessContext);
             }
 
-            gameOperationService.updateBoard(gameProcessDTO);
-            return gameProcessToMoveResponeConverter(gameProcessDTO);
+            gameOperationService.updateBoard(gameProcessContext);
+            return gameProcessToMoveResponeConverter(gameProcessContext);
         } else {
-            throw buildInvalidMoveException(gameProcessDTO, gameDTO);
+            throw buildInvalidMoveException(gameProcessContext, gameDTO);
         }
     }
 
@@ -120,50 +120,50 @@ public class GameProcessServiceImpl implements GameProcessService {
                 gameStatus == GameStatus.DRAW;
     }
 
-    private MoveResponseDTO gameProcessToMoveResponeConverter(GameProcessDTO gameProcessDTO) {
+    private MoveResponseDTO gameProcessToMoveResponeConverter(GameProcessContext gameProcessContext) {
         Long time;
         Side nextMove;
-        if(gameProcessDTO.getSide() == Side.WHITE) {
-            time = gameProcessDTO.getWhiteTime();
+        if(gameProcessContext.getSide() == Side.WHITE) {
+            time = gameProcessContext.getWhiteTime();
             nextMove = Side.BLACK;
         } else {
-            time = gameProcessDTO.getBlackTime();
+            time = gameProcessContext.getBlackTime();
             nextMove = Side.WHITE;
         }
-        return new MoveResponseDTO(gameProcessDTO.getMove(),
-                gameProcessDTO.getAfterMoveBoardState(), time, nextMove.toString(), gameProcessDTO.getGameStatus());
+        return new MoveResponseDTO(gameProcessContext.getMove(),
+                gameProcessContext.getAfterMoveBoardState(), time, nextMove.toString(), gameProcessContext.getGameStatus());
     }
 
-    private void updateTime(GameDTO gameDTO, GameProcessDTO gameProcessDTO) {
-        if(gameProcessDTO.isFirstMove()) {
+    private void updateTime(GameDTO gameDTO, GameProcessContext gameProcessContext) {
+        if(gameProcessContext.isFirstMove()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            gameProcessDTO.setPrevSystemTime(timestamp.getTime());
-            gameProcessDTO.setWhiteTime(gameDTO.getWhiteTime());
-            gameProcessDTO.setBlackTime(gameDTO.getBlackTime());
+            gameProcessContext.setPrevSystemTime(timestamp.getTime());
+            gameProcessContext.setWhiteTime(gameDTO.getWhiteTime());
+            gameProcessContext.setBlackTime(gameDTO.getBlackTime());
             return;
         }
-        Side side = gameProcessDTO.getSide();
+        Side side = gameProcessContext.getSide();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Long currTime = timestamp.getTime();
 
         if(side == Side.WHITE) {
-            Long whiteTime = timeProcessor.countTime(gameProcessDTO.isFirstMove(), gameDTO.getPrevSystemTime(),
+            Long whiteTime = timeProcessor.countTime(gameProcessContext.isFirstMove(), gameDTO.getPrevSystemTime(),
                             currTime,  gameDTO.getWhiteTime());
-            gameProcessDTO.setWhiteTime(whiteTime);
+            gameProcessContext.setWhiteTime(whiteTime);
         } else {
-            Long blackTime = timeProcessor.countTime(gameProcessDTO.isFirstMove(), gameDTO.getPrevSystemTime(),
+            Long blackTime = timeProcessor.countTime(gameProcessContext.isFirstMove(), gameDTO.getPrevSystemTime(),
                             currTime, gameDTO.getBlackTime());
-            gameProcessDTO.setBlackTime(blackTime);
+            gameProcessContext.setBlackTime(blackTime);
         }
-        gameProcessDTO.setPrevSystemTime(currTime);
+        gameProcessContext.setPrevSystemTime(currTime);
     }
 
-    private InvalidMoveException buildInvalidMoveException(GameProcessDTO gameProcessDTO, GameDTO gameDTO) {
-        return new InvalidMoveException("Move: " + gameProcessDTO.getMove() + " is invalid!",
-                gameProcessDTO.getMove(),
-                gameProcessDTO.getCurrBoardState(),
-                gameProcessDTO.getSide() == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime(),
-                gameProcessDTO.getGameCode()
+    private InvalidMoveException buildInvalidMoveException(GameProcessContext gameProcessContext, GameDTO gameDTO) {
+        return new InvalidMoveException("Move: " + gameProcessContext.getMove() + " is invalid!",
+                gameProcessContext.getMove(),
+                gameProcessContext.getCurrBoardState(),
+                gameProcessContext.getSide() == Side.WHITE ? gameDTO.getWhiteTime() : gameDTO.getBlackTime(),
+                gameProcessContext.getGameCode()
         );
     }
 

@@ -1,9 +1,9 @@
-package com.szachmaty.gamelogicservice.service.game.external;
+package com.szachmaty.gamelogicservice.service.external;
 
 import com.szachmaty.gamelogicservice.controller.apiclient.AIClient;
 import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.exception.GameClientException;
-import com.szachmaty.gamelogicservice.service.game.GameProcessService;
+import com.szachmaty.gamelogicservice.service.game.chain.GamePreparation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -19,7 +19,7 @@ import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
 public class AIEventListener implements ApplicationListener<AIMessageEventData> {
 
     private final AIClient aiClient;
-    private final GameProcessService gameProcessService;
+    private final GamePreparation gamePreparation;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final static String AI_CLIENT_ERROR = "AI client error!";
 
@@ -39,12 +39,14 @@ public class AIEventListener implements ApplicationListener<AIMessageEventData> 
             log.info(AI_CLIENT_ERROR);
             throw new GameClientException(AI_CLIENT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         GameMessage gameMessage = GameMessage.builder()
-                .userId(GameMode.AI.name())
+                .userId(GameMode.FRIEND.name()) //prevent from infinity loop
                 .gameCode(event.getGameCode())
                 .move(dataResponse.getMove())
                 .build();
-        MoveResponseDTO moveResponseDTO = gameProcessService.processMove(gameMessage);
+
+        MoveResponseDTO moveResponseDTO = gamePreparation.prepare(gameMessage);
         String destination = QUEUE_URL + gameCode;
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
