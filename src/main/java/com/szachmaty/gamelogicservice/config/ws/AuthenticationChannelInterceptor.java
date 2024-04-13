@@ -1,8 +1,8 @@
 package com.szachmaty.gamelogicservice.config.ws;
 
-import com.szachmaty.gamelogicservice.exception.TokenException;
 import com.szachmaty.gamelogicservice.config.security.AuthenticationToken;
 import com.szachmaty.gamelogicservice.config.security.TokenAuthenticationManager;
+import com.szachmaty.gamelogicservice.exception.TokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -10,7 +10,6 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -50,7 +49,8 @@ public class AuthenticationChannelInterceptor implements ChannelInterceptor {
             throw new TokenException("Only one gameCode is required!");
         }
 
-        Authentication authentication = new AuthenticationToken(token.get(0), gameCode.get(0));
+        AuthenticationToken authentication = new AuthenticationToken(token.get(0), gameCode.get(0));
+        authentication.setCreatedFromWSCall(true);
         authenticationManager.authenticate(authentication);
         stompHeaderAccessor.setUser(authentication);
 

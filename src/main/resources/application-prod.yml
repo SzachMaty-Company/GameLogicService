@@ -4,6 +4,8 @@ external:
       url: ${USER_SERVICE_URL}
     ai-service:
       url: ${AI_SERVICE_URL}
+    chat-service:
+      url: ${CHAT_SERVICE_URL}
 
 spring:
   data:

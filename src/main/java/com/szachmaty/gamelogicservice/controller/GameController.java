@@ -14,8 +14,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.szachmaty.gamelogicservice.controller.APIRoutes.GAME_INIT;
 import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
 
@@ -32,20 +30,21 @@ public class GameController {
 
     private final GameOperationService gameOperationService;
 
-    @GetMapping(path = "/game")
-    public List<GameDTO> getAllGames() {
-        return gameInitService.getAllGames();
-    }
+//    @GetMapping(path = "/game")
+//    public List<GameDTO> getAllGames() {
+//        return gameInitService.getAllGames();
+//    }
 
     @GetMapping(path = "/game-info/{gameCode}")
     public ResponseEntity<GameInfoDTO> getGameByGameCode(@PathVariable String gameCode) {
         return new ResponseEntity<>(gameInfoService.getGameByGameCode(gameCode), HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/game/{gameCode}")
-    public void deleteGame(@PathVariable String gameCode) {
-        gameOperationService.deleteGameByGameCode(gameCode);
-    }
+//    @DeleteMapping(path = "/game/{gameCode}")
+//    public void deleteGame(@PathVariable String gameCode) {
+//        gameOperationService.deleteGameByGameCode(gameCode);
+//    }
+
     @PostMapping(path = GAME_INIT)
     public ResponseEntity<GameInitResponse> createGame(
             @RequestBody

@@ -1,10 +1,7 @@
 package com.szachmaty.gamelogicservice.service.game;
 
 import com.github.bhlangonijr.chesslib.Side;
-import com.szachmaty.gamelogicservice.data.dto.GameDTO;
-import com.szachmaty.gamelogicservice.data.dto.GameMessage;
-import com.szachmaty.gamelogicservice.data.dto.GameProcessDTO;
-import com.szachmaty.gamelogicservice.data.dto.MoveResponseDTO;
+import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
@@ -33,7 +30,7 @@ public class GameProcessServiceImpl implements GameProcessService {
 
     @Override
     @GameParticipantValidator
-    public MoveResponseDTO processGame(GameMessage message) {
+    public MoveResponseDTO processGame(GameMessage message) { //TO-DO refactor to ChainOfResponsibilityPattern
         GameDTO gameDTO = gameOperationService.getGameByGameCode(message.getGameCode());
         if(gameDTO == null) {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
@@ -41,7 +38,7 @@ public class GameProcessServiceImpl implements GameProcessService {
         if(determineIfGameIsFinished(gameDTO.getGameStatus())) {
             throw new InvalidMoveException(GAME_FINISH);
         }
-        if(gameDTO.isGameWithAI()) {
+        if(GameMode.isAIMode(gameDTO.getGameMode())) {
             MoveResponseDTO responseDTO = processMove(message);
             AIMessageEventData eventData =
                     new AIMessageEventData(this, message.getGameCode(), responseDTO.fen());
@@ -62,11 +59,11 @@ public class GameProcessServiceImpl implements GameProcessService {
             throw new GameException("Game with provided code: " + message.getGameCode()  + "doesnt exists!");
         }
 
-        List<String> boards = gameDTO.getBoardStateList();
+        List<String> boards = gameDTO.getFenList();
 
         if(boards != null) {
             Side side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
-            String currBoardState = boards.size() == 0 ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
+            String currBoardState = boards.isEmpty() ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
             gameProcessDTO.setSide(side);
             gameProcessDTO.setCurrBoardState(currBoardState);
         } else { //first move

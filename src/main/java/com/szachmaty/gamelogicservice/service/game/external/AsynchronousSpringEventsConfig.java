@@ -17,4 +17,5 @@ public class AsynchronousSpringEventsConfig {
         eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
         return eventMulticaster;
     }
+
 }

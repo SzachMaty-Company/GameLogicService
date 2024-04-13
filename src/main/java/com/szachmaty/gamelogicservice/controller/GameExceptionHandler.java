@@ -68,8 +68,8 @@ public class GameExceptionHandler {
 
         if(gameDTO != null) {
             gameStatus = gameDTO.getGameStatus();
-            if(gameDTO.getBoardStateList() != null && !gameDTO.getBoardStateList().isEmpty()) {
-                lastBoardState = gameDTO.getBoardStateList().get(gameDTO.getBoardStateList().size() - 1);
+            if(gameDTO.getFenList() != null && !gameDTO.getFenList().isEmpty()) {
+                lastBoardState = gameDTO.getFenList().get(gameDTO.getFenList().size() - 1);
             }
             if(gameDTO.getMoveList() != null && !gameDTO.getMoveList().isEmpty()) {
                 lastMove = gameDTO.getMoveList().get(gameDTO.getMoveList().size() - 1);

@@ -26,13 +26,13 @@ public class GameInfoServiceImpl implements GameInfoService {
             throw new GameException("Game with given gameCode: " + gameCode + " doesn't exists!");
         }
 
-        //check if user belongs to that game
+        //check if user belongs to that game - TO DO
         GameDTO gameDTO = gameOperationService.getGameByGameCode(gameCode);
         if(gameDTO == null) {
             throw new GameException("Game with given gameCode: " + gameCode + " doesn't exists!");
         }
 
-        boolean isFirstMove = gameDTO.getBoardStateList() == null || gameDTO.getBoardStateList().isEmpty();
+        boolean isFirstMove = gameDTO.getFenList() == null || gameDTO.getFenList().isEmpty();
         if(isFirstMove) {
             return processWhenFirstMove(gameDTO);
         }
@@ -49,6 +49,11 @@ public class GameInfoServiceImpl implements GameInfoService {
         Long currSystemTime = timestamp.getTime();
         Long updatedTime = timeProcessor.countTime(false, gameDTO.getPrevSystemTime(), currSystemTime, playerTime);
 
+        GameInfoDTO gameInfoDTO = getGameInfoDTO(sideToMove, updatedTime, gameDTO);
+        return gameInfoDTO;
+    }
+
+    private GameInfoDTO getGameInfoDTO(Side sideToMove, Long updatedTime, GameDTO gameDTO) {
         GameInfoDTO gameInfoDTO = new GameInfoDTO();
         if(sideToMove == Side.WHITE) {
             gameInfoDTO.setWhiteTime(updatedTime);
@@ -57,8 +62,8 @@ public class GameInfoServiceImpl implements GameInfoService {
             gameInfoDTO.setWhiteTime(gameDTO.getWhiteTime());
             gameInfoDTO.setBlackTime(updatedTime);
         }
-        int lastBoardIndex = gameDTO.getBoardStateList().size();
-        gameInfoDTO.setFen(gameDTO.getBoardStateList().get(lastBoardIndex - 1));
+        int lastBoardIndex = gameDTO.getFenList().size();
+        gameInfoDTO.setFen(gameDTO.getFenList().get(lastBoardIndex - 1));
         gameInfoDTO.setGameStatus(gameDTO.getGameStatus());
         gameInfoDTO.setSideToMove(sideToMove.name());
         return gameInfoDTO;

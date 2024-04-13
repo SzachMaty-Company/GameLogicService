@@ -1,6 +1,7 @@
 package com.szachmaty.gamelogicservice.data.entity;
 
 import com.github.bhlangonijr.chesslib.Side;
+import com.szachmaty.gamelogicservice.data.dto.GameMode;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -17,12 +18,11 @@ import static com.szachmaty.gamelogicservice.data.entity.EntityConstants.GAME_HA
 @TypeAlias("GameEntity.class")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class GameEntity implements Serializable {
-
     @Id
     private String gameId;
     @Indexed
@@ -38,9 +38,10 @@ public class GameEntity implements Serializable {
     private Long prevSystemTime;
     private Side sideToMove;
     private GameStatus gameStatus;
-    private List<String> boardStateList;
+    private GameMode gameMode;
+    private List<String> fenList;
     private LinkedList<Long> gameHistory;
     private List<String> moveList;
-    private String winner;
-    private boolean isGameWithAI;
+    private String gameDuration;
+    private String gameStartTime;
 }

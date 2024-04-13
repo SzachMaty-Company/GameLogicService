@@ -12,13 +12,14 @@ import org.springframework.stereotype.Component;
 public class TokenAuthenticationManager implements AuthenticationManager {
 
     private final TokenAuthenticationProvider authenticationProvider;
+    private final static String AUTHENTICATION_ERROR = "Cannot authenticate user!";
 
     @Override
     public Authentication authenticate(Authentication authentication) {
         if(authenticationProvider.supports(authentication.getClass())) {
             return authenticationProvider.authenticate(authentication);
         } else {
-            throw new BadCredentialsException("Cannot authenticate user!");
+            throw new BadCredentialsException(AUTHENTICATION_ERROR);
         }
     }
 }

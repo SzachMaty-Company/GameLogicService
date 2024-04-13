@@ -5,10 +5,10 @@ import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class UserServiceEventData extends ApplicationEvent {
+public class ChatServiceEventData extends ApplicationEvent {
     private final GameDTO gameDTO;
 
-    public UserServiceEventData(Object source, GameDTO gameDTO) {
+    public ChatServiceEventData(Object source, GameDTO gameDTO) {
         super(source);
         this.gameDTO = gameDTO;
     }

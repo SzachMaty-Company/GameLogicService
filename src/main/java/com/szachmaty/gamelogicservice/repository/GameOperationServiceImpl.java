@@ -93,13 +93,13 @@ public class GameOperationServiceImpl implements GameOperationService {
                 moves.add(move);
                 game.setMoveList(moves);
             }
-            List<String> boardStates = game.getBoardStateList();
+            List<String> boardStates = game.getFenList();
             if(boardStates != null) {
                 boardStates.add(boardState);
             } else {
                 List<String> boards = new ArrayList<>();
                 boards.add(boardState);
-                game.setBoardStateList(boards);
+                game.setFenList(boards);
             }
             game.setGameHistory(gameHistory);
             if(isFirstMove) {

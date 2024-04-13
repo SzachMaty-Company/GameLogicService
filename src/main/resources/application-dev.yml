@@ -3,9 +3,11 @@ server:
 external:
   service:
     user-service:
-      url: "https://api.publicapis.org"
+      url: "as.com"
     ai-service:
       url: ai-service
+    chat-service:
+      url : "asd.com"
 
 spring:
   data:
@@ -15,3 +17,9 @@ spring:
 
 jwt:
   key: 0u8feufbeufbefdwgbytactrvanipol]
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE

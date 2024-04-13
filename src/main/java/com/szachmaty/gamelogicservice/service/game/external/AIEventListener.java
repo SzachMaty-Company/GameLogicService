@@ -37,7 +37,7 @@ public class AIEventListener implements ApplicationListener<AIMessageEventData> 
         }
         if(dataResponse == null) {
             log.info(AI_CLIENT_ERROR);
-            throw new GameClientException("AI client error!", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new GameClientException(AI_CLIENT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         GameMessage gameMessage = GameMessage.builder()
                 .userId(GameMode.AI.name())

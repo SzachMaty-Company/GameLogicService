@@ -2,6 +2,7 @@ package com.szachmaty.gamelogicservice.controller.validations;
 
 import com.szachmaty.gamelogicservice.data.dto.GameInitRequest;
 import com.szachmaty.gamelogicservice.data.dto.GameMessage;
+import com.szachmaty.gamelogicservice.data.dto.GameMode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,16 @@ public class RequestValidatorImpl implements ConstraintValidator<RequestValidato
         }
         boolean isGameTimeValid = input.gameTime() != null && input.gameTime() > 0;
         boolean isPlayersValid =  !input.player1().isBlank() && !input.player2().isBlank();
-        return isPlayersValid && isGameTimeValid;
+        boolean isGameModeValid = validateGameMode(input);
+        return isGameModeValid && isPlayersValid && isGameTimeValid;
+    }
+
+    private boolean validateGameMode(GameInitRequest input) {
+        GameMode gameMode = input.gameMode();
+        if(GameMode.isAIMode(gameMode)) {
+            return input.player1().contains(GameMode.AI.toString()) && input.player2().contains(GameMode.AI.toString());
+        }
+        return true;
     }
 
     private boolean checkGameMessage(GameMessage input) {

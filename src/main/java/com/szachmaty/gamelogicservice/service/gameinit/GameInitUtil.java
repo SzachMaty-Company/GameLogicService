@@ -1,12 +1,14 @@
 package com.szachmaty.gamelogicservice.service.gameinit;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public final class GameInitUtil {
 
-    private final static long HOUR_IN_SEC = 3600;
-    private final static long MIN_IN_SEC = 60;
+    private final static String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+    private final static int SECONDS = 60;
 
     /**
      * @return uuid
@@ -18,9 +20,19 @@ public final class GameInitUtil {
 
     /**
      * @param gameTime
-     * @return LocalTime in format h:min:sec or min:sec
+     * @return GameDuration in seconds
      */
     public static Long gameTimeParser(Integer gameTime) {
-        return Long.valueOf(gameTime*60);
+        return Long.valueOf(gameTime*SECONDS);
     }
+
+    /**
+     * @return Current datetime in format: dd-MM-yyyy HH:mm:ss
+     */
+    public static String gameStartTimeCreator() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+        return now.format(formatter);
+    }
+
 }

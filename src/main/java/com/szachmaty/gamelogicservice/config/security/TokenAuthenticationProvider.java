@@ -21,7 +21,12 @@ import java.text.ParseException;
 public class TokenAuthenticationProvider implements AuthenticationProvider {
 
     private final GameOperationService gameOperationService;
+
+    private static final String BEARER  = "Bearer ";
     private static final String USER_ID_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+    private static final String CANNOT_PARSE_TOKEN = "Cannot parse JWT token!";
+    private static final String INVALID_TOKEN = "Token is invalid!";
+    private static final String INVALID_USER = "Inalid user credentials and/or invalid gameCode!";
 
     @Value("${jwt.key}")
     private String jwtKey;
@@ -31,7 +36,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
         AuthenticationToken authenticationToken = (AuthenticationToken) authentication;
         String rawToken = (String) authenticationToken.getPrincipal();
 
-        if(rawToken.startsWith("Bearer ")) {
+        if(rawToken.startsWith(BEARER)) {
             rawToken = rawToken.substring(7);
         }
 
@@ -44,20 +49,29 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 
             userId = jwt.getJWTClaimsSet().getStringClaim(USER_ID_CLAIM);
         } catch (ParseException | JOSEException e) {
-            throw new BadCredentialsException("Cannot parse JWT token!");
+            throw new BadCredentialsException(CANNOT_PARSE_TOKEN);
         }
 
-        boolean isUserValid = gameOperationService
-                .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
         if(!isTokenValid) {
-            throw new BadCredentialsException("Token is invalid!");
+            throw new BadCredentialsException(INVALID_TOKEN);
         }
-        if(!isUserValid) {
-            throw new BadCredentialsException("Inalid user credentials and/or invalid gameCode!");
+
+        if(authenticationToken.isCreatedFromWSCall()) {
+            wsAuthenticationProcessing(authenticationToken, userId);
         }
+
         authenticationToken.setPrincipal(userId);
         authenticationToken.setAuthenticated(true);
         return authenticationToken;
+    }
+
+    private void wsAuthenticationProcessing(AuthenticationToken authenticationToken, String userId) {
+        boolean isUserValid = gameOperationService
+                .isPlayerGameParticipant((String) authenticationToken.getCredentials(), userId);
+        if(!isUserValid) {
+            throw new BadCredentialsException(INVALID_USER);
+        }
+
     }
 
     @Override
