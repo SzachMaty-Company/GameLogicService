@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.chain.X;
+package com.szachmaty.gamelogicservice.service.game.chain.handler;
 
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Side;
@@ -24,7 +24,7 @@ public class MoveValidator implements GameProcessHandler {
     public boolean process(GameProcessContext context) {
         String currMove = context.getMove();
         Side side = context.getSide();
-        String currBoardState = context.getCurrBoardState();
+        String currBoardState = context.getCurrFen();
         Board board = new Board();
 
         Move move = prepareMove(currMove, side);
@@ -40,7 +40,7 @@ public class MoveValidator implements GameProcessHandler {
         }
 
         if(isMoveValid) {
-            context.setAfterMoveBoardState(board.getFen());
+            context.setNextFen(board.getFen());
             context.setGameHistory(board.getHistory());
         } else {
             throw buildInvalidMoveException(context);
@@ -61,7 +61,7 @@ public class MoveValidator implements GameProcessHandler {
     private InvalidMoveException buildInvalidMoveException(GameProcessContext context) {
         return new InvalidMoveException(String.format("Move: %s is invalid!", context.getMove()),
                 context.getMove(),
-                context.getCurrBoardState(),
+                context.getCurrFen(),
                 context.getSide() == Side.WHITE ? context.getWhiteTime() : context.getBlackTime(),
                 context.getGameCode()
         );

@@ -1,7 +1,7 @@
 package com.szachmaty.gamelogicservice.service.game.chain;
 
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
-import com.szachmaty.gamelogicservice.service.game.chain.X.*;
+import com.szachmaty.gamelogicservice.service.game.chain.handler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

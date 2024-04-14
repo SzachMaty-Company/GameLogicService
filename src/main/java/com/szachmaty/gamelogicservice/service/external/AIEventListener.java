@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.service.external;
 import com.szachmaty.gamelogicservice.controller.apiclient.AIClient;
 import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.exception.GameClientException;
-import com.szachmaty.gamelogicservice.service.game.chain.GamePreparation;
+import com.szachmaty.gamelogicservice.service.game.GamePreparation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;

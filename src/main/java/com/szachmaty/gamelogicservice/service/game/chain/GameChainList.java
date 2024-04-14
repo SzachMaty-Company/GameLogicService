@@ -21,11 +21,8 @@ public class GameChainList {
         }
     }
 
-
-
     public GameChainList addNext(GameProcessHandler item) {
         items.add(item);
-
         return this;
     }
 

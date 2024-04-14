@@ -1,8 +1,8 @@
-package com.szachmaty.gamelogicservice.service.game.chain.X;
+package com.szachmaty.gamelogicservice.service.game.chain.handler;
 
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
-import com.szachmaty.gamelogicservice.service.game.TimeProcessor;
+import com.szachmaty.gamelogicservice.service.game.chain.service.TimeProcessor;
 import com.szachmaty.gamelogicservice.service.game.chain.GameProcessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

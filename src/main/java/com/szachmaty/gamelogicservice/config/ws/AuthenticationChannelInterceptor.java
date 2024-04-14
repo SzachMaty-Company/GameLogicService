@@ -21,6 +21,11 @@ public class AuthenticationChannelInterceptor implements ChannelInterceptor {
     private final TokenAuthenticationManager authenticationManager;
     private final static String TOKEN_HEADER = "token";
     private final static String GAME_CODE_HEADER = "gameCode";
+    private final static String MISSING_HEADERS = "Missing headers!";
+    private final static String MISSING_AUTH_TOKEN = "Missing headers!";
+    private final static String MISSING_GAME_CODE = "Missing game code!";
+    private final static String INVALID_TOKEN_SIZE = "Only one token is required!";
+    private final static String INVALID_GAME_CODE_SIZE = "Only one gameCode is required!";
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -30,23 +35,23 @@ public class AuthenticationChannelInterceptor implements ChannelInterceptor {
             return message;
         }
         if(stompHeaderAccessor == null) {
-            throw new TokenException("Missing headers!");
+            throw new TokenException(MISSING_HEADERS);
         }
 
         List<String> token = stompHeaderAccessor.getNativeHeader(TOKEN_HEADER);
         List<String> gameCode = stompHeaderAccessor.getNativeHeader(GAME_CODE_HEADER);
 
         if(token == null) {
-            throw new TokenException("Missing authentication token!");
+            throw new TokenException(MISSING_AUTH_TOKEN);
         }
         if(gameCode == null) {
-            throw new TokenException("Missing game code!");
+            throw new TokenException(MISSING_GAME_CODE);
         }
         if(token.size() != 1) {
-            throw new TokenException("Only one token is required!");
+            throw new TokenException(INVALID_TOKEN_SIZE);
         }
         if(gameCode.size() != 1) {
-            throw new TokenException("Only one gameCode is required!");
+            throw new TokenException(INVALID_GAME_CODE_SIZE);
         }
 
         AuthenticationToken authentication = new AuthenticationToken(token.get(0), gameCode.get(0));

@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.chain;
+package com.szachmaty.gamelogicservice.service.game;
 
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.*;
@@ -6,12 +6,13 @@ import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import com.szachmaty.gamelogicservice.service.external.AIMessageEventData;
-import com.szachmaty.gamelogicservice.service.game.GameParticipantValidator;
+import com.szachmaty.gamelogicservice.service.game.chain.GameChainFactory;
+import com.szachmaty.gamelogicservice.service.game.chain.GameChainList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import static com.szachmaty.gamelogicservice.service.game.chain.GameUtil.finishDeterminator;
+import static com.szachmaty.gamelogicservice.service.game.GameUtil.finishDeterminator;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +62,6 @@ public class GamePreparationImpl implements GamePreparation {
             nextMove = Side.WHITE;
         }
         return new MoveResponseDTO(context.getMove(),
-                context.getAfterMoveBoardState(), time, nextMove.toString(), context.getGameStatus());
+                context.getNextFen(), time, nextMove.toString(), context.getGameStatus());
     }
 }

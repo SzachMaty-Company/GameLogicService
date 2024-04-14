@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.chain.X;
+package com.szachmaty.gamelogicservice.service.game.chain.handler;
 
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import static com.szachmaty.gamelogicservice.service.game.chain.GameUtil.finishDeterminator;
+import static com.szachmaty.gamelogicservice.service.game.GameUtil.finishDeterminator;
 
 @Service
 @RequiredArgsConstructor

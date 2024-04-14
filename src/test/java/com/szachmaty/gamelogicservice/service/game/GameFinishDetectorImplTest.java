@@ -3,6 +3,7 @@ package com.szachmaty.gamelogicservice.service.game;
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
+import com.szachmaty.gamelogicservice.service.game.chain.service.GameFinishDetectorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

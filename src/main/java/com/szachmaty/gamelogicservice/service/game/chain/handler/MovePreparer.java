@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game.chain.X;
+package com.szachmaty.gamelogicservice.service.game.chain.handler;
 
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
@@ -31,11 +31,11 @@ public class MovePreparer implements GameProcessHandler {
             Side side = boards.size() % 2 == 0 ? Side.WHITE : Side.BLACK;
             String currBoardState = boards.isEmpty() ? INIT_CHESS_BOARD : boards.get(boards.size() - 1);
             context.setSide(side);
-            context.setCurrBoardState(currBoardState);
+            context.setCurrFen(currBoardState);
         } else { //first move
             context.setFirstMove(true);
             context.setSide(Side.WHITE);
-            context.setCurrBoardState(INIT_CHESS_BOARD);
+            context.setCurrFen(INIT_CHESS_BOARD);
         }
 
         context.setPrevSystemTime(gameDTO.getPrevSystemTime());

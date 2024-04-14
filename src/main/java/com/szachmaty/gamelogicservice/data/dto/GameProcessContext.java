@@ -19,8 +19,8 @@ import java.util.LinkedList;
 public class GameProcessContext {
     private String gameCode;
     private String move;
-    private String currBoardState;
-    private String afterMoveBoardState;
+    private String currFen;
+    private String nextFen;
     private Side side;
     private LinkedList<Long> gameHistory;
     private Long whiteTime;

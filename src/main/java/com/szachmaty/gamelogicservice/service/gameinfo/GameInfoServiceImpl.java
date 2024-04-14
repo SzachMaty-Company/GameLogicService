@@ -5,7 +5,7 @@ import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.dto.GameInfoDTO;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.service.game.TimeProcessor;
+import com.szachmaty.gamelogicservice.service.game.chain.service.TimeProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +23,13 @@ public class GameInfoServiceImpl implements GameInfoService {
     @Override
     public GameInfoDTO getGameByGameCode(String gameCode) {
         if("".equals(gameCode)) {
-            throw new GameException("Game with given gameCode: " + gameCode + " doesn't exists!");
+            throw new GameException(String.format("Game with given gameCode: %s doesn't exists!", gameCode));
         }
 
         //check if user belongs to that game - TO DO
         GameDTO gameDTO = gameOperationService.getGameByGameCode(gameCode);
         if(gameDTO == null) {
-            throw new GameException("Game with given gameCode: " + gameCode + " doesn't exists!");
+            throw new GameException(String.format("Game with given gameCode: %s doesn't exists!", gameCode));
         }
 
         boolean isFirstMove = gameDTO.getFenList() == null || gameDTO.getFenList().isEmpty();
@@ -49,8 +49,7 @@ public class GameInfoServiceImpl implements GameInfoService {
         Long currSystemTime = timestamp.getTime();
         Long updatedTime = timeProcessor.countTime(false, gameDTO.getPrevSystemTime(), currSystemTime, playerTime);
 
-        GameInfoDTO gameInfoDTO = getGameInfoDTO(sideToMove, updatedTime, gameDTO);
-        return gameInfoDTO;
+        return getGameInfoDTO(sideToMove, updatedTime, gameDTO);
     }
 
     private GameInfoDTO getGameInfoDTO(Side sideToMove, Long updatedTime, GameDTO gameDTO) {

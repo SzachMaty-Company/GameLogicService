@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game;
+package com.szachmaty.gamelogicservice.service.game.chain.service;
 
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;

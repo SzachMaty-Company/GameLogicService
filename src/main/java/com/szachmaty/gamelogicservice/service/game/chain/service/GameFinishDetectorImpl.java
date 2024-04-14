@@ -1,11 +1,10 @@
-package com.szachmaty.gamelogicservice.service.game;
+package com.szachmaty.gamelogicservice.service.game.chain.service;
 
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
-import com.szachmaty.gamelogicservice.exception.GameException;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -15,12 +14,11 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
 
     private final static int IS_WINNER = 1;
     private final static int NO_WINNER = 0;
-    private final static String GAME_COMPLETION_ERROR = "An error occurred while checking the game's completion status!";
 
     @Override
     public GameStatus checkResultBasedOnBoard(GameProcessContext gameProcessContext) {
         LinkedList<Long> gameHistory = gameProcessContext.getGameHistory();
-        String boardState = gameProcessContext.getAfterMoveBoardState();
+        String boardState = gameProcessContext.getNextFen();
         Side side = gameProcessContext.getSide();
         boolean isDraw;
         GameStatus gameStatus = GameStatus.IN_GAME;
@@ -48,7 +46,7 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
     }
 
     public GameStatus checkResultBasedOnTime(GameProcessContext gameProcessContext) {
-        String boardState = gameProcessContext.getAfterMoveBoardState();
+        String boardState = gameProcessContext.getNextFen();
         Long whiteTime = gameProcessContext.getWhiteTime();
         Long blackTime = gameProcessContext.getBlackTime();
         GameStatus gameStatus = GameStatus.IN_GAME;
@@ -60,22 +58,16 @@ public class GameFinishDetectorImpl implements GameFinishDetector {
         board.loadFromFen(boardState);
         Piece[] pieces = board.boardToArray();
 
-        if(whiteTime != null && whiteTime < 0) {
+        if(whiteTime != null && whiteTime <= 0) {
             int[] resultArray = blackPlayerInsufficientMaterialToWinChecker(pieces);
-            if(resultArray.length != 4) {
-                throw new GameException(GAME_COMPLETION_ERROR);
-            }
             isBlackWinner = resultArray[0] == IS_WINNER;
             if(!isBlackWinner) {
                 isDraw = determineIsDraw(resultArray);
                 isBlackWinner = !isDraw;
             }
         }
-        else if(blackTime != null && blackTime < 0) {
+        else if(blackTime != null && blackTime <= 0) {
             int[] resultArray = whitePlayerInsufficientMaterialToWinChecker(pieces);
-            if(resultArray.length != 4) {
-                throw new GameException(GAME_COMPLETION_ERROR);
-            }
             isWhiteWinner = resultArray[0] == IS_WINNER;
             if(!isWhiteWinner) {
                 isDraw = determineIsDraw(resultArray);

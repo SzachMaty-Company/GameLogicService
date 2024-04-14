@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.game;
+package com.szachmaty.gamelogicservice.service.game.chain.service;
 
 import com.github.bhlangonijr.chesslib.*;
 import com.github.bhlangonijr.chesslib.move.Move;
@@ -28,7 +28,7 @@ public class MoveProcessorImpl implements MoveProcessor {
     public boolean doMove(GameProcessContext gameProcessContext) {
         String currMove = gameProcessContext.getMove();
         Side side = gameProcessContext.getSide();
-        String currBoardState = gameProcessContext.getCurrBoardState();
+        String currBoardState = gameProcessContext.getCurrFen();
 
         Move move = prepareMove(currMove, side);
         board.loadFromFen(currBoardState);

@@ -25,7 +25,6 @@ public class GameOperationServiceImpl implements GameOperationService {
     private final Mapper mapperProvider;
     private final static String GAME_NOT_EXISTS = "Game was finished or never existed!";
 
-
     @Override
     public List<GameDTO> getAll() {
         Iterable<GameEntity> games = gameEntityRepository.findAll();
@@ -76,7 +75,7 @@ public class GameOperationServiceImpl implements GameOperationService {
     public GameDTO updateBoard(GameProcessContext gameProcessContext) {
         String gameCode = gameProcessContext.getGameCode();
         String move = gameProcessContext.getMove();
-        String boardState = gameProcessContext.getAfterMoveBoardState();
+        String boardState = gameProcessContext.getNextFen();
         Side side = gameProcessContext.getSide();
         LinkedList<Long> gameHistory = gameProcessContext.getGameHistory();
         boolean isFirstMove = gameProcessContext.isFirstMove();
@@ -118,7 +117,7 @@ public class GameOperationServiceImpl implements GameOperationService {
             GameEntity gameEntity = gameEntityRepository.save(game);
             return mapperProvider.modelMapper().map(gameEntity, GameDTO.class);
         } else {
-            throw new GameEntityNotFoundException("Cannot find game with gameCode " + gameCode);
+            throw new GameEntityNotFoundException(String.format("Cannot find game with gameCode: %s", gameCode));
         }
     }
 

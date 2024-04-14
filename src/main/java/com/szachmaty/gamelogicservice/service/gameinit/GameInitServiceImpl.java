@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +18,7 @@ import java.util.List;
 public class GameInitServiceImpl implements GameInitService {
 
     private final GameOperationService gameOperationService;
+    private final GameInitNotificationConverter gameInitNotificationConverter;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
@@ -32,6 +32,7 @@ public class GameInitServiceImpl implements GameInitService {
         String player1 = initReq.player1();
         String player2 = initReq.player2();
 
+        //handle when AI plays white color
         GameDTO gameDTO = GameDTO.builder()
                 .gameCode(gameCode)
                 .whiteUserId(isPlayer1White ? player1 : player2)
@@ -51,16 +52,13 @@ public class GameInitServiceImpl implements GameInitService {
         gameOperationService.saveNewGame(gameDTO);
 
         if(!isAIFlow) {
+            GameInitNotification notification = gameInitNotificationConverter.toGameInitNotification(gameDTO);
             ChatServiceEventData eventData =
-                    new ChatServiceEventData(this, gameDTO);
+                    new ChatServiceEventData(this, notification);
             applicationEventPublisher.publishEvent(eventData); //async
         }
 
         return new GameInitResponse(gameCode);
     }
 
-    @Override
-    public List<GameDTO> getAllGames() {
-        return gameOperationService.getAll();
-    }
 }

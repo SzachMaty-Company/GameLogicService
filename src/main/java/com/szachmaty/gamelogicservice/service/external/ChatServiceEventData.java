@@ -1,15 +1,15 @@
 package com.szachmaty.gamelogicservice.service.external;
 
-import com.szachmaty.gamelogicservice.data.dto.GameDTO;
+import com.szachmaty.gamelogicservice.data.dto.GameInitNotification;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
 public class ChatServiceEventData extends ApplicationEvent {
-    private final GameDTO gameDTO;
+    private final GameInitNotification gameInitNotification;
 
-    public ChatServiceEventData(Object source, GameDTO gameDTO) {
+    public ChatServiceEventData(Object source, GameInitNotification gameInitNotification) {
         super(source);
-        this.gameDTO = gameDTO;
+        this.gameInitNotification = gameInitNotification;
     }
 }
