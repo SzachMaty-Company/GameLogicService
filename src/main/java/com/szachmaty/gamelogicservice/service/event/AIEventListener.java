@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.external;
+package com.szachmaty.gamelogicservice.service.event;
 
 import com.szachmaty.gamelogicservice.controller.apiclient.AIClient;
 import com.szachmaty.gamelogicservice.data.dto.*;
@@ -32,7 +32,7 @@ public class AIEventListener implements ApplicationListener<AIMessageEventData> 
         try {
             dataResponse = aiClient.makeMove(aiDataRequest);
         } catch(Exception e) {
-            log.info(AI_CLIENT_ERROR + " " + e.getMessage());
+            log.info(AI_CLIENT_ERROR + " {}", e.getMessage());
             throw new GameClientException(AI_CLIENT_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(dataResponse == null) {

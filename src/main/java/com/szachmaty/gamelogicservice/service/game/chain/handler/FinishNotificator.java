@@ -3,7 +3,7 @@ package com.szachmaty.gamelogicservice.service.game.chain.handler;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.dto.GameProcessContext;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.service.external.UserServiceEventData;
+import com.szachmaty.gamelogicservice.service.event.UserServiceEventData;
 import com.szachmaty.gamelogicservice.service.game.chain.GameProcessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

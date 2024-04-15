@@ -1,8 +1,7 @@
 package com.szachmaty.gamelogicservice.service.gameinit;
 
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.UUID;
 
 public final class GameInitUtil {
@@ -30,9 +29,10 @@ public final class GameInitUtil {
      * @return Current datetime in format: dd-MM-yyyy HH:mm:ss
      */
     public static String gameStartTimeCreator() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-        return now.format(formatter);
+//        LocalDateTime now = LocalDateTime.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+//        return now.format(formatter);
+        return Instant.now().toString();
     }
 
 }

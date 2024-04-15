@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.external;
+package com.szachmaty.gamelogicservice.service.event;
 
 import com.szachmaty.gamelogicservice.controller.apiclient.UserDataServiceClient;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
@@ -47,10 +47,10 @@ public class UserServiceEventListener implements ApplicationListener<UserService
                 .gameCode(game.getGameCode())
                 .whiteUserId(game.getWhiteUserId())
                 .blackUserId(game.getBlackUserId())
-                .gameMode(game.getGameMode().toString())
-                .gameDuration(game.getGameDuration())
+                .gameMode(game.getGameMode())
+                .gameTime(game.getGameDuration())
                 .gameStartTime(game.getGameStartTime())
-                .gameStatus(game.getGameStatus().toString()) //to check
+                .gameStatus(game.getGameStatus())
                 .fenList(game.getFenList())
                 .moveList(game.getMoveList())
                 .build();

@@ -1,5 +1,6 @@
 package com.szachmaty.gamelogicservice.data.dto;
 
+import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,10 +15,10 @@ public class GameFinishDTO implements Serializable {
     private String gameCode;
     private String whiteUserId;
     private String blackUserId;
-    private String gameMode;
-    private String gameDuration;
+    private GameMode gameMode;
+    private String gameTime;
     private String gameStartTime;
-    private String gameStatus;
+    private GameStatus gameStatus;
     private List<String> fenList;
     private List<String> moveList;
 }

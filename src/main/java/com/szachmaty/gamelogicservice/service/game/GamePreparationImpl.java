@@ -5,7 +5,7 @@ import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
-import com.szachmaty.gamelogicservice.service.external.AIMessageEventData;
+import com.szachmaty.gamelogicservice.service.event.AIMessageEventData;
 import com.szachmaty.gamelogicservice.service.game.chain.GameChainFactory;
 import com.szachmaty.gamelogicservice.service.game.chain.GameChainList;
 import lombok.RequiredArgsConstructor;

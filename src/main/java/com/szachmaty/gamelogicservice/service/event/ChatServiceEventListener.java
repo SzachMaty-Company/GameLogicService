@@ -1,4 +1,4 @@
-package com.szachmaty.gamelogicservice.service.external;
+package com.szachmaty.gamelogicservice.service.event;
 
 import com.szachmaty.gamelogicservice.controller.apiclient.ChatServiceClient;
 import com.szachmaty.gamelogicservice.data.dto.GameInitNotification;
