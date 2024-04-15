@@ -29,9 +29,6 @@ public class UserServiceEventListener implements ApplicationListener<UserService
             throw new GameException(GAME_EVENT_ERROR);
         }
         GameFinishDTO gameFinishDTO = buildGameFinishDTO(event.getGameDTO());
-        gameFinishDTO.setWhiteUserId("1"); //mocked
-        gameFinishDTO.setBlackUserId("2"); //mocked - add to AIId as 1
-        log.info(gameFinishDTO.toString());
 
         try {
             userServiceClient.sendGame(gameFinishDTO);

@@ -1,6 +1,5 @@
 package com.szachmaty.gamelogicservice.service.game;
 
-import com.github.bhlangonijr.chesslib.Side;
 import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.exception.InvalidMoveException;
@@ -12,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import static com.szachmaty.gamelogicservice.service.game.GameUtil.contextToMoveRespone;
 import static com.szachmaty.gamelogicservice.service.game.GameUtil.finishDeterminator;
 
 @Service
@@ -42,8 +42,9 @@ public class GamePreparationImpl implements GamePreparation {
         MoveResponseDTO responseDTO = contextToMoveRespone(context);
 
         if(GameMode.isAIMode(gameDTO.getGameMode())) {
+            boolean isWhiteAndFirstCall = false;
             AIMessageEventData eventData =
-                    new AIMessageEventData(this, message.getGameCode(), responseDTO.fen());
+                    new AIMessageEventData(this, message.getGameCode(), responseDTO.fen(), isWhiteAndFirstCall);
             applicationEventPublisher.publishEvent(eventData); //async
             return responseDTO;
         }
@@ -51,17 +52,5 @@ public class GamePreparationImpl implements GamePreparation {
         return responseDTO;
     }
 
-    private MoveResponseDTO contextToMoveRespone(GameProcessContext context) {
-        Long time;
-        Side nextMove;
-        if(context.getSide() == Side.WHITE) {
-            time = context.getWhiteTime();
-            nextMove = Side.BLACK;
-        } else {
-            time = context.getBlackTime();
-            nextMove = Side.WHITE;
-        }
-        return new MoveResponseDTO(context.getMove(),
-                context.getNextFen(), time, nextMove.toString(), context.getGameStatus());
-    }
+
 }

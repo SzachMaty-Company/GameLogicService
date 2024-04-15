@@ -5,7 +5,6 @@ import com.szachmaty.gamelogicservice.data.dto.*;
 import com.szachmaty.gamelogicservice.data.entity.GameStatus;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import com.szachmaty.gamelogicservice.service.event.AIMessageEventData;
-import com.szachmaty.gamelogicservice.service.event.ChatServiceEventData;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,7 @@ public class GameInitServiceImpl implements GameInitService {
     private final GameOperationService gameOperationService;
     private final GameInitNotificationConverter gameInitNotificationConverter;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final static int DELAY = 5000;
+    private final ChatServiceCallPreparator chatServiceCallPreparator;
     private final static String DEFAULT_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     @SneakyThrows
@@ -55,16 +54,14 @@ public class GameInitServiceImpl implements GameInitService {
 
         gameOperationService.saveNewGame(gameDTO);
 
-        if(isAIFlow) {
-            Thread.sleep(DELAY);
+        if(isAIFlow && gameDTO.getWhiteUserId().equals(GameMode.AI.toString())) {
+            boolean isWhiteAndFirstCall = true;
             AIMessageEventData eventData =
-                    new AIMessageEventData(this, gameDTO.getGameCode(), DEFAULT_BOARD);
+                    new AIMessageEventData(this, gameDTO.getGameCode(), DEFAULT_BOARD, isWhiteAndFirstCall);
             applicationEventPublisher.publishEvent(eventData); //async
-        } else {
+        } else if(!isAIFlow) {
             GameInitNotification notification = gameInitNotificationConverter.toGameInitNotification(gameDTO);
-            ChatServiceEventData eventData =
-                    new ChatServiceEventData(this, notification);
-            applicationEventPublisher.publishEvent(eventData); //async
+            chatServiceCallPreparator.notifyChatService(notification);
         }
 
         return new GameInitResponse(gameCode);
