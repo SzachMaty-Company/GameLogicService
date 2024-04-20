@@ -63,7 +63,7 @@ public class GameInfoServiceImpl implements GameInfoService {
 
         PlayerColor playerColor = null;
         if(authentication != null) {
-            String principal = authentication.getPrincipal() != null ? authentication.getPrincipal().toString() : null;
+            String principal = authentication.getPrincipal().toString();
 
             if(gameDTO.getWhiteUserId().equals(principal)) {
                 playerColor = PlayerColor.WHITE;
@@ -72,6 +72,8 @@ public class GameInfoServiceImpl implements GameInfoService {
             } else {
                 throw new GameException(String.format("User: %s doesn't belong to game with code: %s", principal, gameDTO.getGameCode()));
             }
+        } else {
+            throw new GameException(String.format("Authentication error!, gameCode %s", gameDTO.getGameCode()));
         }
         return playerColor;
     }
