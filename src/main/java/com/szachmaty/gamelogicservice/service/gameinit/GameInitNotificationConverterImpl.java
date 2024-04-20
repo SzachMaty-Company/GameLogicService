@@ -27,6 +27,6 @@ public class GameInitNotificationConverterImpl implements GameInitNotificationCo
         String userId = (String) authentication.getPrincipal();
         String whiteUserId = gameDTO.getWhiteUserId();
         String blackUserId = gameDTO.getBlackUserId();
-        return whiteUserId.equals(userId) ? userId : blackUserId;
+        return whiteUserId.equals(userId) ? blackUserId : whiteUserId;
     }
 }
