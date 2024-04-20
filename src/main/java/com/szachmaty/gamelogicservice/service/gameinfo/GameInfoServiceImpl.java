@@ -96,12 +96,16 @@ public class GameInfoServiceImpl implements GameInfoService {
     }
 
     private GameInfoDTO processWhenFirstMove(GameDTO gameDTO) {
+        PlayerColor playerColor = resolvePlayerColor(gameDTO);
+
         GameInfoDTO gameInfoDTO = new GameInfoDTO();
         gameInfoDTO.setFen(DEFAULT_BOARD);
         gameInfoDTO.setWhiteTime(gameDTO.getWhiteTime());
         gameInfoDTO.setBlackTime(gameDTO.getBlackTime());
         gameInfoDTO.setGameStatus(gameDTO.getGameStatus());
         gameInfoDTO.setSideToMove(gameDTO.getSideToMove().name());
+        gameInfoDTO.setPlayerColor(playerColor);
+
         return gameInfoDTO;
     }
 
