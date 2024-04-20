@@ -6,7 +6,6 @@ import java.util.UUID;
 
 public final class GameInitUtil {
 
-    private final static String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
     private final static int SECONDS = 60;
 
     /**
@@ -29,9 +28,6 @@ public final class GameInitUtil {
      * @return Current datetime in format: dd-MM-yyyy HH:mm:ss
      */
     public static String gameStartTimeCreator() {
-//        LocalDateTime now = LocalDateTime.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-//        return now.format(formatter);
         return Instant.now().toString();
     }
 

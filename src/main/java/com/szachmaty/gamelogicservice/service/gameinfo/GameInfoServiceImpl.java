@@ -1,12 +1,16 @@
 package com.szachmaty.gamelogicservice.service.gameinfo;
 
 import com.github.bhlangonijr.chesslib.Side;
+import com.szachmaty.gamelogicservice.config.security.AuthenticationToken;
 import com.szachmaty.gamelogicservice.data.dto.GameDTO;
 import com.szachmaty.gamelogicservice.data.dto.GameInfoDTO;
+import com.szachmaty.gamelogicservice.data.dto.PlayerColor;
 import com.szachmaty.gamelogicservice.exception.GameException;
 import com.szachmaty.gamelogicservice.repository.GameOperationService;
 import com.szachmaty.gamelogicservice.service.game.chain.service.TimeProcessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -26,7 +30,6 @@ public class GameInfoServiceImpl implements GameInfoService {
             throw new GameException(String.format("Game with given gameCode: %s doesn't exists!", gameCode));
         }
 
-        //check if user belongs to that game - TO DO
         GameDTO gameDTO = gameOperationService.getGameByGameCode(gameCode);
         if(gameDTO == null) {
             throw new GameException(String.format("Game with given gameCode: %s doesn't exists!", gameCode));
@@ -49,10 +52,31 @@ public class GameInfoServiceImpl implements GameInfoService {
         Long currSystemTime = timestamp.getTime();
         Long updatedTime = timeProcessor.countTime(false, gameDTO.getPrevSystemTime(), currSystemTime, playerTime);
 
-        return getGameInfoDTO(sideToMove, updatedTime, gameDTO);
+        PlayerColor playerColor = resolvePlayerColor(gameDTO);
+
+        return getGameInfoDTO(sideToMove, updatedTime, playerColor, gameDTO);
     }
 
-    private GameInfoDTO getGameInfoDTO(Side sideToMove, Long updatedTime, GameDTO gameDTO) {
+    private PlayerColor resolvePlayerColor(GameDTO gameDTO) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        AuthenticationToken authentication = (AuthenticationToken) securityContext.getAuthentication();
+
+        PlayerColor playerColor = null;
+        if(authentication != null) {
+            String principal = authentication.getPrincipal() != null ? authentication.getPrincipal().toString() : null;
+
+            if(gameDTO.getWhiteUserId().equals(principal)) {
+                playerColor = PlayerColor.WHITE;
+            } else if(gameDTO.getBlackUserId().equals(principal)) {
+                playerColor = PlayerColor.BLACK;
+            } else {
+                throw new GameException(String.format("User: %s doesn't belong to game with code: %s", principal, gameDTO.getGameCode()));
+            }
+        }
+        return playerColor;
+    }
+
+    private GameInfoDTO getGameInfoDTO(Side sideToMove, Long updatedTime, PlayerColor playerColor, GameDTO gameDTO) {
         GameInfoDTO gameInfoDTO = new GameInfoDTO();
         if(sideToMove == Side.WHITE) {
             gameInfoDTO.setWhiteTime(updatedTime);
@@ -65,6 +89,7 @@ public class GameInfoServiceImpl implements GameInfoService {
         gameInfoDTO.setFen(gameDTO.getFenList().get(lastBoardIndex - 1));
         gameInfoDTO.setGameStatus(gameDTO.getGameStatus());
         gameInfoDTO.setSideToMove(sideToMove.name());
+        gameInfoDTO.setPlayerColor(playerColor);
         return gameInfoDTO;
     }
 

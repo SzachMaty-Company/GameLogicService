@@ -28,7 +28,7 @@ public class AIEventListener implements ApplicationListener<AIMessageEventData> 
     private final GameChainFactory gameChainFactory;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final static String AI_CLIENT_ERROR = "AI client error!";
-    private final static int DELAY = 5000;
+    private final static int DELAY = 10000;
 
     @Override
     @SneakyThrows

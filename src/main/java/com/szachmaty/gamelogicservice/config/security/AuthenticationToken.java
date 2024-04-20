@@ -16,7 +16,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     private static final Collection<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(
             new SimpleGrantedAuthority("ROLE_USER")
     );
-    // represents JWT token
+    // initially represents JWT token -> after processing it becomes userId
     private Object principal;
     // represents gameCode or null
     private Object credentials;

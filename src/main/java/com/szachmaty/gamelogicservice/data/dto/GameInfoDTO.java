@@ -16,4 +16,5 @@ public class GameInfoDTO {
     private Long blackTime;
     private String sideToMove;
     private GameStatus gameStatus;
+    private PlayerColor playerColor;
 }
