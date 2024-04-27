@@ -1,64 +1,93 @@
-## GameLogicService
+# GameLogicService
 
-Run docker image
+Microservice component designed to provide a chess-playing API.
 
-`
-docker compose --file=backend-docker-compose.yml up --build gateway game-logic-service redis
-`
+## Tech Stack:
+- Java 17
+- Spring Boot 3.2.2
+- Spring Security 6.2.1
+- Spring Aop 
+- Spring Data Jpa 
+- Spring Boot Validation
+- Lombok
+- ModelMapper
+- Feign Client
+- Web Sockets (Stomp) API
+- Gradle
+- Redis
+- chesslib
 
-### API
+## API
 
-- /game-init - to initialize game
-  
-Payload:
+### Http
+
+- POST /game-init - to initialize game
 
 ```json
 {
-    "gameMode": "<string>",
-    "gameTime": "<string>",
-    "player1PieceColor": "<string>",
-    "player1": "<string>",
-    "player2": "<string>"
+    "gameMode" : "<string>",
+    "gameTime" : "<string>",
+    "player1PieceColor" : "<string>",
+    "player1" : "<string>",
+    "player2" : "<string>"
 }
 ```
 
-- /game-handshake - connect to websocket
-  
-Headers in game-handshake: jwt token, gameCode
+```json
+{
+  "gameCode" : "<string>"
+}
+```
 
-Example:
+- GET /game-info/{gameCode} - get info about game
+
+```json
+{
+    "fen" : "<string>",
+    "whiteTime" : "<string>",
+    "blackTime" : "<string>",
+    "sideToMove" : "<string>",
+    "gameStatus" : "<string>",
+    "playerColor" : "<string>"
+}
+```
+
+### WebSocket
+
+- /game-handshake - enable websocket connection
+
+Example (written in JavaScript):
 
 ```
   client = new StompJs.Client({
     brokerURL: "ws://localhost:8000/game-handshake",
     connectHeaders: {
-    token: jwtToken,
-    gameCode : gameCode
+        token: jwtToken,
+        gameCode : gameCode
     }
   })
 ```
-- (stomp) SUBSCRIBE /queue/move/${gameCode} - for receiving message with structure:
-Payload:
+- MESSAGE /queue/move/${gameCode} - for receiving game-message:
 
 ```json
 {
-  "move": "<string>",
-  "fen": "<string>",
-  "time": "<string>",
-  "errorMessage": "<string>"
+  "move" : "<string>",
+  "fen" : "<string>",
+  "time" : "<string>",
+  "nextMoveSide" : "<string>",
+  "gameStatus" : "<string>",
+  "errorMessage" : "<null> | <string>"
 }
 ```
-If there is an error during move processing, errorMessage will have description of this.
 
-- (stomp) SEND /game/move - for sending messages
-  
+- SEND /game/move - for sending messages
+
 Payload:
 
 ```json
   {
-    "userId": "<string>",
     "gameCode": "<string>",
-    "move": "<string>",
+    "move": "<string>"
   }
 ```
 

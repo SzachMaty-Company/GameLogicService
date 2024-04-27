@@ -15,19 +15,12 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=redis-password
       - JWT_KEY=0u8feufbeufbefdwgbytactrvanipol]
-      - USER_SERVICE_URL=http://user-service:8000 #to be changed
       - AI_SERVICE_URL=http://minimal-python:8888
+      - USER_SERVICE_URL=http://user_data_service:80
+      - CHAT_SERVICE_URL=http://chatservice:8124
     build:
       dockerfile: Dockerfile
     depends_on:
       - redis
     ports:
-      - "8125:8080"
-
-  python-container:
-    container_name: minimal-python
-    build:
-      context: ../AIService
-      dockerfile: Dockerfile.python
-    expose:
-      - "8888"
+      - "8080:8080"
