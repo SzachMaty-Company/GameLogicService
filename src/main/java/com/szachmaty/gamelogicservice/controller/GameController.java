@@ -13,8 +13,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.szachmaty.gamelogicservice.controller.APIRoutes.*;
-
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -26,12 +24,12 @@ public class GameController {
     private final GamePreparation gamePreparation;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @GetMapping(path = GAME_INFO)
+    @GetMapping(path = "/game-info/{gameCode}")
     public ResponseEntity<GameInfoDTO> getGameByGameCode(@PathVariable String gameCode) {
         return new ResponseEntity<>(gameInfoService.getGameByGameCode(gameCode), HttpStatus.OK);
     }
 
-    @PostMapping(path = GAME_INIT)
+    @PostMapping(path = "/game-init")
     public ResponseEntity<GameInitResponse> createGame(
             @RequestBody
             @RequestValidator
@@ -40,10 +38,10 @@ public class GameController {
         return new ResponseEntity<>(gameInitService.initGame(gCR), HttpStatus.OK);
     }
 
-    @MessageMapping(MOVE)
+    @MessageMapping("/move")
     public void processChessMove(@RequestValidator GameMessage message) {
         MoveResponseDTO moveResponseDTO = gamePreparation.prepare(message);
-        String destination = QUEUE_URL + message.getGameCode();
+        String destination = "/queue/move/" + message.getGameCode();
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
 

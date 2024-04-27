@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
 import static com.szachmaty.gamelogicservice.service.game.GameUtil.contextToMoveRespone;
 
 @Service
@@ -60,7 +59,7 @@ public class AIEventListener implements ApplicationListener<AIMessageEventData> 
 
         MoveResponseDTO moveResponseDTO = contextToMoveRespone(context);
 
-        String destination = QUEUE_URL + gameCode;
+        String destination = "/queue/move/" + gameCode;
         simpMessagingTemplate.convertAndSend(destination, moveResponseDTO);
     }
 }

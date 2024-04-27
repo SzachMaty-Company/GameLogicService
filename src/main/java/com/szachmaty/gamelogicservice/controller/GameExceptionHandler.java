@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.net.ConnectException;
 
-import static com.szachmaty.gamelogicservice.controller.APIRoutes.QUEUE_URL;
-
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GameExceptionHandler {
@@ -60,7 +58,7 @@ public class GameExceptionHandler {
         if(e instanceof GameFinishException) {
             isGameFinished = true;
         }
-        String destination = QUEUE_URL + gameCode;
+        String destination = "/queue/move/" + gameCode;
         String lastBoardState = INIT_CHESS_BOARD;
         String lastMove = null;
         String nextPlayerMove = isGameFinished ? null : gameDTO.getSideToMove().name();

@@ -10,11 +10,9 @@ public class GameErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         String resErrorCause = response.reason();
-        log.error(methodKey);
+        HttpStatus httpResStatus = HttpStatus.valueOf(response.status());
         log.error(resErrorCause);
         log.error(response.body().toString());
-        System.out.println(resErrorCause); //TO BE ADDED
-        HttpStatus httpResStatus = HttpStatus.valueOf(response.status());
         log.error(String.valueOf(httpResStatus));
         if(httpResStatus.is5xxServerError()) {
             throw new GameClientException("Internal server error!", httpResStatus);

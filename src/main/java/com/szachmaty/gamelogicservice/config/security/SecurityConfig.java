@@ -37,18 +37,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    // TO-DO
-//    @Bean
-//    static SecurityContextHolderStrategy securityContextHolderStrategy() {
-//        SecurityContextHolder.setStrategyName(MODE_INHERITABLETHREADLOCAL);
-//        return SecurityContextHolder.getContextHolderStrategy();
-//    }
-//
-//    @Bean
-//    static MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-//        return new DefaultMethodSecurityExpressionHandler();
-//    }
-
     private CorsConfigurationSource corsConfig() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
