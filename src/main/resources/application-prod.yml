@@ -1,0 +1,18 @@
+external:
+  service:
+    user-service:
+      url: ${USER_SERVICE_URL}
+    ai-service:
+      url: ${AI_SERVICE_URL}
+    chat-service:
+      url: ${CHAT_SERVICE_URL}
+
+spring:
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      host: ${REDIS_HOST_NAME}
+
+jwt:
+  key: ${JWT_KEY}

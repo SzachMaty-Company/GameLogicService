@@ -1,0 +1,25 @@
+server:
+  port: 8080
+external:
+  service:
+    user-service:
+      url: "as.com"
+    ai-service:
+      url: ai-service
+    chat-service:
+      url : "asd.com"
+
+spring:
+  data:
+    redis:
+      port: 6379
+      host: redis
+
+jwt:
+  key: 0u8feufbeufbefdwgbytactrvanipol]
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE

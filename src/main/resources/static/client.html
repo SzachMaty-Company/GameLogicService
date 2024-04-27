@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+    <script defer>
+        let client = null;
+        let subscription = null;
+        const gameCode = "766dee63b07a";
+        const port = 8000;
+        let messages = [];
+        // hardcoded for tests
+        let users = { //remember about real tokens
+            "tomisław": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6InVzZXIxIn0.XryQwJ1cat_nQXmsViRRwlOhEVo8yesd6y7XYn0JDFw",
+            "yeti": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6InVzZXIyIn0.TI3aUbl8mnffrakAqMyzuq24ApGMXt45K3r69l0WsNA",
+        };
+
+        function displayMessages(messages) {
+            let ul = [];
+            for (const m of messages) {
+                const li = document.createElement("li");
+
+                li.innerHTML = `<p><span>chat: ${m.chatId} sender: ${m.senderId}: </span>${m.message}</p>`
+                ul.push(li);
+            }
+            document.querySelector("#messages")
+                .replaceChildren(...ul);
+        }
+
+        function debugCallback(str) {
+            console.debug(str)
+        }
+
+        function callback(message) {
+            // messages.push(JSON.parse(message.body));
+            // displayMessages(messages);
+            console.log("DLACZEGO NIE CHCESZ WYSŁAĆ?")
+            console.log(JSON.parse(message.body))
+        }
+
+        async function connect(user) {
+            client = new StompJs.Client({
+                brokerURL: `ws://localhost:${port}/game-handshake`,
+                debug: debugCallback,
+                connectHeaders: {
+                    token: users[user],
+                    gameCode : gameCode
+                }
+            })
+
+            client.onConnect = function (frame) {
+                subscription = client.subscribe(`/queue/move/${gameCode}`,(message) => {
+                    console.log(message.body);
+                });
+                console.log({ subscription })
+                console.log("subscribed!")
+            }
+
+            console.log("client activated");
+            client.activate();
+        }
+
+        function disconnect() {
+            if (client) {
+                console.log("client deactivated")
+                client.deactivate();
+            }
+        }
+
+        async function sendMessageByUser1() {
+            const move = document.getElementById("message-input");
+            client.publish({
+                destination: "/game/move",
+                body: JSON.stringify({
+                    gameCode: gameCode,
+                    move: move.value
+                }),
+                headers: { "Content-Type:": "application/json" }
+            })
+        }
+        async function sendMessageByUser2() {
+            const move = document.getElementById("message-input");
+            client.publish({
+                destination: "/game/move",
+                body: JSON.stringify({
+                    userId: "user2",
+                    gameCode: gameCode,
+                    move: move.value
+                }),
+                headers: { "Content-Type:": "application/json" }
+            })
+        }
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div>
+        <button id="tomisław-connect_btn" onclick="connect('tomisław')">Połącz jako Tomisław</button>
+        <button id="yeti-connect_btn" onclick="connect('yeti')">Połącz jako Yeti</button>
+        <button id="disconnect_btn" onclick="disconnect()">Disconnect</button>
+        <button id="send-message_btn-1" onclick="sendMessageByUser1()">Send Message By user1</button>
+        <button id="send-message_btn-2" onclick="sendMessageByUser2()">Send Message By user2</button>
+        <input id="message-input" type="text"/>
+    </div>
+
+</div>
+
+<div>
+    <h1>messages</h1>
+    <ul id="messages"></ul>
+</div>
+
+</body>
+<style>
+    * {
+        font-family: sans-serif;
+        box-sizing: border-box;
+    }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1ch;
+    }
+
+    .connection-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .connection-wrapper > * {
+        width: fit-content;
+    }
+
+</style>
+</html>
